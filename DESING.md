@@ -36,14 +36,14 @@ El juego se basa en un sistema de supervivencia por días, donde el jugador debe
 ---
 ## 1. Mockups de Pantallas Principales
 
-### Pantalla 1: Inicio / Día 0 (Noticia en TV)
+### Pantalla 1: Inicio / Día 0 
 <img width="1901" height="1065" alt="image" src="https://github.com/user-attachments/assets/b0f8c0c8-dd36-4218-860c-bec558fb8f36" />
 
 ### Pantalla 2: Juego (Día con Decisión)
 <img width="1886" height="1062" alt="image" src="https://github.com/user-attachments/assets/6c098853-d8e6-4ca2-aa0d-a2fc53629898" />
 
 
-### Pantalla 4: Game Over
+### Pantalla 3: Game Over
 <img width="1884" height="1050" alt="image" src="https://github.com/user-attachments/assets/4200dfb3-980c-49c6-8520-516b6ae27d83" />
 
 ---

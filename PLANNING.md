@@ -66,37 +66,37 @@
 
 **Configuración del proyecto:**
 
-- [ ] Inicializar proyecto Vue.js 3 con Vite usando pnpm:
+- [x] Inicializar proyecto Vue.js 3 con Vite usando pnpm:
 ```
 pnpm create vue@latest apocalipsis25
 cd apocalipsis25
 pnpm install
 ```
-- [ ] Instalar dependencias principales:
+- [x] Instalar dependencias principales:
 ```
 pnpm add pinia
 pnpm add nes.css
 pnpm add @pixelium/web-vue
 pnpm add -D vitest @vue/test-utils jsdom oxlint
 ```
-- [ ] Configurar Vue Router (aunque sea simple, por escalabilidad)
+- [x] Configurar Vue Router (aunque sea simple, por escalabilidad)
 
-- [ ] Configurar vite.config.js para alias y assets
+- [x] Configurar vite.config.js para alias y assets
 
 Componentes base:
 
-- [ ] Crear main.js con configuración de Pinia
+- [x] Crear main.js con configuración de Pinia
 
-- [ ] Crear App.vue con estructura principal (contenedor 16:9)
+- [x] Crear App.vue con estructura principal (contenedor 16:9)
 
-- [ ] Implementar componente StatBar.vue (comida, agua, salud, moral + día)
+- [x] Implementar componente StatBar.vue (comida, agua, salud, moral + día)
 
-- [ ] Implementar componente PixelBackground.vue (fondo dinámico)
+- [x] Implementar componente PixelBackground.vue (fondo dinámico)
 
-- [ ] Implementar estilos base con efecto CRT (scanlines + vignette)
+- [x] Implementar estilos base con efecto CRT (scanlines + vignette)
 
 Docker:
-- [ ] Crear Dockerfile inicial:
+- [x] Crear Dockerfile inicial:
 ```
 FROM node:18-alpine
 WORKDIR /app
@@ -110,13 +110,13 @@ CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 Proyecto ejecutable en navegador con pantalla inicial, estadísticas visibles y fondos dinámicos funcionando.
 
  Lo que se logró completar:
-(Se llena al final de la semana)
+ Instalamos dependencias, configuramos Vue router, vite.config.js e implementamos una base en la pagina principal (solo visual)
 
  Lo que NO se logró:
-(Se llena al final de la semana)
+ -
 
  Notas:
-(Problemas encontrados, soluciones, cambios de plan)
+ Avanzamos con la historia con un diagrama de flujo con las desiciones para tener una historial lineal.
 
 ---
 
@@ -169,7 +169,7 @@ Componentes interactivos:
 - [ ] Implementar DecisionButtons.vue (botones dinámicos)
 
  Objetivo de la semana:
-Juego completamente jugable del día 0 al día 25, con todas las decisiones afectando recursos y mostrando consecuencias.
+Juego completamente jugable del día 0 al día 15, con todas las decisiones afectando recursos y mostrando consecuencias.
 
  Lo que se logró completar:
 (Se llena al final de la semana)

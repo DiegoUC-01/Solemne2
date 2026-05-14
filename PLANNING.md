@@ -65,111 +65,50 @@
 ###  Tareas planificadas:
 
 **Configuración del proyecto:**
+***Inicializar Proyecto***
+- [ ] Instalar Node.js y pnpm en nuestras computadoras.
 
-- [x] Inicializar proyecto Vue.js 3 con Vite usando pnpm:
+- [ ] Crear Estructura de carpertas:
 ```
-pnpm create vue@latest apocalipsis25
-cd apocalipsis25
-pnpm install
+src\
+  assets\styles\
+  composables\
+  components\    
+  components\minigames
+  stores\        
+  data\         
+  tests\         
+public\          
+.github\
+  workflows\ 
 ```
-- [x] Instalar dependencias principales:
-```
-pnpm add pinia
-pnpm add nes.css
-pnpm add @pixelium/web-vue
-pnpm add -D vitest @vue/test-utils jsdom oxlint
-```
-- [x] Configurar Vue Router (aunque sea simple, por escalabilidad)
+- [ ] Crear package.json
+- [ ] pnpm install
+- [ ] Crear archivo vite.config.js
+- [ ] Crear archivo .gitignore
+- [ ] Crear archivo index.html
+      
+***Creacion de Archivo***
 
-- [x] Configurar vite.config.js para alias y assets
+- [ ] Crear archivo src/main.js
+- [ ] Crear archivo src/assets/retro.css
+- [ ] Crear archivo src/data/events.js
+- [ ] Crear archivo src/stores/gameStore.js
+- [ ] Crear archivo src/components/StatBar.vue
+- [ ] Crear archivo src/components/StoryText.vue
+- [ ] Crear archivo src/components/DecisionButtons.vue
+- [ ] Crear archivo src/components/PixelBackground.vue
+- [ ] Crear archivo src/components/SceneArt.vue
+- [ ] Crear archivo src/components/minigames/CatchRainGame.vue
+- [ ] Crear archivo src/components/minigames/FindcansGame.vue
+- [ ] Crear archivo src/components/minigames/EscapeGame.vue
+- [ ] Crear archivo src/composables/useAudio.js
+- [ ] Crear archivo src/App.vue
+- [ ] Crear archivo src/tests/gameStore.spec.js
 
-Componentes base:
 
-- [x] Crear main.js con configuración de Pinia
-
-- [x] Crear App.vue con estructura principal (contenedor 16:9)
-
-- [x] Implementar componente StatBar.vue (comida, agua, salud, moral + día)
-
-- [x] Implementar componente PixelBackground.vue (fondo dinámico)
-
-- [x] Implementar estilos base con efecto CRT (scanlines + vignette)
-
-Docker:
-- [x] Crear Dockerfile inicial:
-```
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-EXPOSE 5173
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
-```
  Objetivo de la semana:
 Proyecto ejecutable en navegador con pantalla inicial, estadísticas visibles y fondos dinámicos funcionando.
-
- Lo que se logró completar:
- Instalamos dependencias, configuramos Vue router, vite.config.js e implementamos una base en la pagina principal (solo visual)
-
- Lo que NO se logró:
- -
-
- Notas:
- Avanzamos con la historia con un diagrama de flujo con las desiciones para tener una historial lineal.
-
----
-
-## Semana 3 – Desarrollo de Mecánicas y Lógica del Juego
- Tareas planificadas:
-Estado global (Pinia):
-
-- [ ] Implementar gameStore.js con:
-
--State: day, food, water, health, moral, allowedWoman, gameOver, victory
-
--Getters: isAlive, displayDay, isHungry
-
--Actions: applyDecision, consumeDaily, checkGameStatus, resetGame
-
-Sistema de eventos por día:
-
-- [ ] Crear events.js con array de objetos para cada día:
-
-- [ ] Implementar días especiales:
-
-Día 0: Introducción + noticia TV
-
-Día 1: Decisión moral (mujer e hijo)
-
-Día 3: Decisión comida (buscar vs podrida)
-
-Día 5: Medicina (+28 salud)
-
-Día 8: Manual primeros auxilios
-
-Día 11: Ataque de saqueadores
-
-Día 13: Señal de radio
-
-Día 15: Victoria
-
-Eventos aleatorios:
-
-- [ ] Implementar sistema de eventos aleatorios para días sin evento fijo
-
-- [ ] Crear 6-8 eventos genéricos (positivos, negativos, neutrales)
-
-Componentes interactivos:
-
-- [ ] Implementar StoryText.vue con efecto máquina de escribir
-
-- [ ] Implementar sistema de avance por clic/tecla ESPACIO
-
-- [ ] Implementar DecisionButtons.vue (botones dinámicos)
-
- Objetivo de la semana:
-Juego completamente jugable del día 0 al día 15, con todas las decisiones afectando recursos y mostrando consecuencias.
 
  Lo que se logró completar:
 (Se llena al final de la semana)
@@ -182,9 +121,49 @@ Juego completamente jugable del día 0 al día 15, con todas las decisiones afec
 
 ---
 
-## Semana 4 – Testing y CI/CD
+## Semana 3 – Implementación de Desarrollo de Mecánicas y Lógica del Juego(codigo)
  Tareas planificadas:
-### Pruebas unitarias (Vitest):
+### Agregar Store del juego y datos de eventos:
+- [ ] Implementación de events.js
+- [ ] Implementación de gameStore.js
+### Agregar componentes Visuales Estilo Retro y App Principal:
+- [ ] Implementación de main.js
+- [ ] Implementación de retro.css
+- [ ] Implementación de StatBar.vue
+- [ ] Implementación de StoryText.vue
+- [ ] Implementación de DecisionButtons.vue
+- [ ] Implementación de PixelBackground.vue
+- [ ] Implementación de SceneArt.vue
+- [ ] Implementación de App.vue
+### Agregar minijuegos interactivos para dias 5, 10 y 15:
+- [ ] Implementación de CatchRainGame.vue
+- [ ] Implementación de FindcansGame.vue
+- [ ] Implementación de EscapeGame.vue
+### Agregar Sistema de audio con web Audio API:
+- [ ] Implementación de useAudio.js
+
+ Objetivo de la semana:
+Tener una Base del Juego completamente jugable del día 0 al día 15, con todas las decisiones afectando recursos y mostrando consecuencias.
+
+ Lo que se logró completar:
+(Se llena al final de la semana)
+
+ Lo que NO se logró:
+(Se llena al final de la semana)
+
+ Notas:
+(Problemas encontrados, soluciones, cambios de plan)
+
+---
+
+## Semana 4 – Testing, Docker y CI/CD
+ Tareas planificadas:
+### Agregar Pruebas unitaria del store :
+
+- [ ] Implementación de gameStore.spec.js
+      
+### Agragar Pruebas unitarias (Vitest):
+
 
 - [ ] Configurar Vitest en vite.config.js
 
@@ -204,22 +183,20 @@ Juego completamente jugable del día 0 al día 15, con todas las decisiones afec
 
 - [ ] DecisionButtons.vue: verificar que emite eventos
 
+### Docker:
+
+- [ ] Crear Dockerfile
+
 ### GitHub Actions (CI/CD):
 
-- [ ] Crear workflow de Linter (.github/workflows/lint.yml):
-- [ ] Crear workflow de Testing (.github/workflows/test.yml):
+- [ ] Crear workflow de Linter 
+- [ ] Crear workflow de Testing 
 
 ### DockerHub:
 
-- [ ] Crear workflow de Build y Push a DockerHub (.github/workflows/docker.yml):
+- [ ] Crear workflow de Build y Push a DockerHub
 
 - [ ] Configurar secrets en GitHub (DOCKER_USERNAME, DOCKER_TOKEN)
-
-## Sonido :
-
-Implementar useAudio.js con Web Audio API
-
-Añadir sonidos: click, damage, victory, game over
 
  Objetivo de la semana:
 Flujo CI/CD funcionando con cada push: linter → pruebas → build Docker → push a DockerHub.
@@ -232,6 +209,7 @@ Flujo CI/CD funcionando con cada push: linter → pruebas → build Docker → p
 
  Notas:
 (Problemas encontrados, soluciones, cambios de plan)
+
 
 ---
 

@@ -66,9 +66,9 @@
 
 **Configuración del proyecto:**
 ***Inicializar Proyecto***
-- [ ] Instalar Node.js y pnpm en nuestras computadoras.
+- [x] Instalar Node.js y pnpm en nuestras computadoras.
 
-- [ ] Crear Estructura de carpertas:
+- [x] Crear Estructura de carpertas:
 ```
 src\
   assets\styles\
@@ -82,34 +82,33 @@ public\
 .github\
   workflows\ 
 ```
-- [ ] Crear package.json
-- [ ] pnpm install
-- [ ] Crear archivo vite.config.js
-- [ ] Crear archivo .gitignore
-- [ ] Crear archivo index.html
+- [x] Crear package.json
+- [x] pnpm install
+- [x] Crear archivo vite.config.js
+- [x] Crear archivo .gitignore
+- [x] Crear archivo index.html
       
 ***Creacion de Archivo***
 
-- [ ] Crear archivo src/main.js
-- [ ] Crear archivo src/assets/retro.css
-- [ ] Crear archivo src/data/events.js
-- [ ] Crear archivo src/stores/gameStore.js
-- [ ] Crear archivo src/components/StatBar.vue
-- [ ] Crear archivo src/components/StoryText.vue
-- [ ] Crear archivo src/components/DecisionButtons.vue
-- [ ] Crear archivo src/components/PixelBackground.vue
-- [ ] Crear archivo src/components/SceneArt.vue
-- [ ] Crear archivo src/components/minigames/CatchRainGame.vue
-- [ ] Crear archivo src/components/minigames/FindcansGame.vue
-- [ ] Crear archivo src/components/minigames/EscapeGame.vue
-- [ ] Crear archivo src/composables/useAudio.js
-- [ ] Crear archivo src/App.vue
-- [ ] Crear archivo src/tests/gameStore.spec.js
+- [x] Crear archivo src/main.js
+- [x] Crear archivo src/assets/retro.css
+- [x] Crear archivo src/data/events.js
+- [x] Crear archivo src/stores/gameStore.js
+- [x] Crear archivo src/components/StatBar.vue
+- [x] Crear archivo src/components/StoryText.vue
+- [x] Crear archivo src/components/DecisionButtons.vue
+- [x] Crear archivo src/components/PixelBackground.vue
+- [x] Crear archivo src/components/SceneArt.vue
+- [x] Crear archivo src/components/minigames/CatchRainGame.vue
+- [x] Crear archivo src/components/minigames/FindcansGame.vue
+- [x] Crear archivo src/components/minigames/EscapeGame.vue
+- [x] Crear archivo src/composables/useAudio.js
+- [x] Crear archivo src/App.vue
+- [] Crear archivo src/tests/gameStore.spec.js
 
 
  Objetivo de la semana:
-Proyecto ejecutable en navegador con pantalla inicial, estadísticas visibles y fondos dinámicos funcionando.
-
+Tener la Estructura base del proyector completa 
  Lo que se logró completar:
 (Se llena al final de la semana)
 
@@ -117,7 +116,7 @@ Proyecto ejecutable en navegador con pantalla inicial, estadísticas visibles y 
 (Se llena al final de la semana)
 
  Notas:
-(Problemas encontrados, soluciones, cambios de plan)
+Debido a revisión de la semana 2 que fue mala, se decidio empezar de nuevo desde la base y hubo una reestructuracion en los planes originales, esto se realizo durante la semana 3   
 
 ---
 

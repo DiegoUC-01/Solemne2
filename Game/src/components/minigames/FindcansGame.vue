@@ -1,40 +1,40 @@
 <template>
   <div class="minigame-container">
-    <h2 class="minigame-title">⭕ BUSCAR LATAS EN EL SUPERMERCADO</h2>
-    
+    <h2 class="minigame-title">⭕ EVITAR ASALTANTES</h2>
+
     <div class="game-area">
       <div class="player" :style="{ left: playerX + '%' }"></div>
-      
-      <div 
-        v-for="(item, idx) in items" 
-        :key="idx"
+
+      <div
+        v-for="item in items"
+        :key="item.id"
         class="item"
-        :style="{ 
-          left: item.x + '%', 
+        :style="{
+          left: item.x + '%',
           top: item.y + '%',
-          background: item.color
+          background: item.color,
         }"
       >
         {{ item.emoji }}
       </div>
 
-      <div v-if="timeLeft <= 0" class="game-over">
-        <h3>{{ collected >= 5 ? '¡VICTORIA!' : '¡DERROTA!' }}</h3>
-        <p>Latas recolectadas: {{ collected }}/5</p>
+      <div v-if="timeLeft <= 0 || collected >= targetCans" class="game-over">
+        <h3>{{ collected >= targetCans ? '¡VICTORIA!' : '¡DERROTA!' }}</h3>
+        <p>Latas recolectadas: {{ collected }}/{{ targetCans }}</p>
       </div>
 
       <div class="game-stats">
         <span>Tiempo: {{ Math.ceil(timeLeft) }}s</span>
-        <span>Recogidas: {{ collected }}/5</span>
+        <span>Recogidas: {{ collected }}/{{ targetCans }}</span>
       </div>
     </div>
 
     <div class="instructions">
-      Usa IZQUIERDA/DERECHA o A/D para moverte. Recoge 5 latas en 30 segundos.
+      Usa ← → o A/D para moverte. Recoge {{ targetCans }} latas en 30 segundos.
     </div>
 
-    <button 
-      v-if="timeLeft <= 0"
+    <button
+      v-if="timeLeft <= 0 || collected >= targetCans"
       class="continue-btn"
       @click="emitResult"
     >
@@ -51,37 +51,47 @@ const emit = defineEmits(['complete'])
 const playerX = ref(50)
 const items = ref([])
 const collected = ref(0)
+const targetCans = 5
 const timeLeft = ref(30)
 const gameActive = ref(true)
+let gameInterval = null
 
 const generateItems = () => {
-  items.value = Array.from({ length: 8 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 90,
-    y: Math.random() * 80,
+  items.value = Array.from({ length: 10 }, (_, i) => ({
+    id: i + 1,
+    x: Math.random() * 88 + 2,
+    y: Math.random() * 75 + 5,
     color: ['#ff00ff', '#00ffff', '#ffff00', '#ff0088'][Math.floor(Math.random() * 4)],
-    emoji: '🥫'
+    emoji: '🥫',
   }))
 }
 
+const checkWin = () => {
+  if (collected.value >= targetCans) {
+    gameActive.value = false
+    clearInterval(gameInterval)
+  }
+}
+
 const emitResult = () => {
-  emit('complete', collected.value >= 5 ? 'win' : 'lose')
+  emit('complete', collected.value >= targetCans ? 'win' : 'lose')
 }
 
 const handleKeyPress = (e) => {
   if (!gameActive.value) return
-  
+
   if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-    playerX.value = Math.max(0, playerX.value - 5)
+    playerX.value = Math.max(2, playerX.value - 6)
   } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-    playerX.value = Math.min(95, playerX.value + 5)
+    playerX.value = Math.min(94, playerX.value + 6)
   }
 
-  // Detectar colisión con items
-  items.value = items.value.filter(item => {
-    const distance = Math.abs(playerX.value - item.x)
-    if (distance < 5) {
+  const playerCenter = playerX.value
+  items.value = items.value.filter((item) => {
+    const distance = Math.abs(playerCenter - item.x)
+    if (distance < 7) {
       collected.value++
+      checkWin()
       return false
     }
     return true
@@ -99,10 +109,10 @@ const updateTimer = () => {
 onMounted(() => {
   generateItems()
   window.addEventListener('keydown', handleKeyPress)
-  const interval = setInterval(updateTimer, 100)
+  gameInterval = setInterval(updateTimer, 100)
   onBeforeUnmount(() => {
     window.removeEventListener('keydown', handleKeyPress)
-    clearInterval(interval)
+    clearInterval(gameInterval)
   })
 })
 </script>
@@ -110,23 +120,25 @@ onMounted(() => {
 <style scoped>
 .minigame-container {
   background: #111;
-  border: 3px solid #fff;
+  border: 3px solid #00ff00;
   padding: 1.5rem;
   font-family: 'Courier New', monospace;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 .minigame-title {
   color: #ffff00;
   text-align: center;
-  text-shadow: 2px 2px 0 #ff00ff;
+  text-shadow: 0 0 10px #ff8800;
   margin-bottom: 1rem;
 }
 
 .game-area {
   position: relative;
   width: 100%;
-  height: 300px;
-  background: linear-gradient(180deg, #1a0033 0%, #330011 100%);
+  height: 340px;
+  background: linear-gradient(180deg, #1a0a2e 0%, #2d1040 60%, #0a0a0a 100%);
   border: 2px solid #00ff00;
   overflow: hidden;
   margin-bottom: 1rem;
@@ -134,38 +146,44 @@ onMounted(() => {
 
 .player {
   position: absolute;
-  bottom: 10px;
-  width: 30px;
-  height: 30px;
-  background: #00ff00;
+  bottom: 12px;
+  width: 32px;
+  height: 32px;
+  background: #00ff66;
   clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-  transition: left 0.1s;
+  transition: left 0.08s;
+  filter: drop-shadow(0 0 6px #00ff66);
+  z-index: 10;
 }
 
 .item {
   position: absolute;
-  width: 30px;
-  height: 30px;
-  font-size: 1.5rem;
+  width: 34px;
+  height: 34px;
+  font-size: 1.6rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: float 2s infinite;
+  border-radius: 50%;
+  animation: float 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px currentColor);
 }
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+  50% { transform: translateY(-8px); }
 }
 
 .game-stats {
   position: absolute;
   top: 10px;
-  right: 10px;
-  color: #00ff00;
+  right: 12px;
+  color: #00ff66;
   font-weight: bold;
   display: flex;
   gap: 1rem;
+  font-size: 0.95rem;
+  z-index: 5;
 }
 
 .game-over {
@@ -173,29 +191,39 @@ onMounted(() => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.92);
   padding: 2rem;
   text-align: center;
   border: 2px solid #ffff00;
   color: #ffff00;
+  z-index: 20;
 }
 
 .game-over h3 {
   font-size: 2rem;
   margin: 0;
+  text-shadow: 0 0 10px rgba(255, 255, 0, 0.7);
+}
+
+.game-over p {
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
 }
 
 .instructions {
-  color: #00ff00;
+  color: #88ff88;
   font-size: 0.9rem;
   margin-bottom: 1rem;
+  text-align: center;
 }
 
 .continue-btn {
+  display: block;
+  margin: 0 auto;
   padding: 0.8rem 2rem;
-  background: #00ff00;
+  background: #00ff66;
   color: #000;
-  border: 2px solid #00ff00;
+  border: 2px solid #00ff66;
   font-family: 'Courier New', monospace;
   font-weight: bold;
   cursor: pointer;
@@ -205,6 +233,6 @@ onMounted(() => {
 
 .continue-btn:hover {
   background: #000;
-  color: #00ff00;
+  color: #00ff66;
 }
 </style>

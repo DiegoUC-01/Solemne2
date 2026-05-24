@@ -1,28 +1,27 @@
 <template>
   <div class="minigame-container">
     <h2 class="minigame-title">💧 RECOGER AGUA DE LLUVIA</h2>
-    
-    <div class="game-area">
-      <div 
-        v-for="(drop, idx) in raindrops" 
-        :key="idx"
+
+    <div class="game-area" ref="gameArea">
+      <div
+        v-for="drop in raindrops"
+        :key="drop.id"
         class="raindrop"
-        :style="{ 
+        :style="{
           left: drop.x + '%',
-          top: drop.y + '%'
+          top: drop.y + '%',
         }"
-      >
-        💧
-      </div>
+      ></div>
 
       <div class="bucket" :style="{ left: bucketX + '%' }">
         🪣
       </div>
 
-      <div class="water-level" :style="{ height: (waterCollected / maxWater) * 100 + '%' }"></div>
-
-      <div v-if="timeLeft <= 0" class="game-over">
-        <h3>{{ waterCollected >= maxWater / 2 ? '¡EXCELENTE!' : '¡INSUFICIENTE!' }}</h3>
+      <div
+        v-if="timeLeft <= 0 || waterCollected >= maxWater"
+        class="game-over"
+      >
+        <h3>{{ waterCollected >= winThreshold ? '¡EXCELENTE!' : '¡INSUFICIENTE!' }}</h3>
         <p>Agua recolectada: {{ waterCollected }}/{{ maxWater }}</p>
       </div>
 
@@ -33,11 +32,11 @@
     </div>
 
     <div class="instructions">
-      Usa IZQUIERDA/DERECHA o A/D para mover el cubo. Recoge tanta agua como puedas en 25 segundos.
+      Usa ← → o A/D para mover el cubo. Recolecta al menos {{ Math.ceil(winThreshold) }} gotas.
     </div>
 
-    <button 
-      v-if="timeLeft <= 0"
+    <button
+      v-if="timeLeft <= 0 || waterCollected >= maxWater"
       class="continue-btn"
       @click="emitResult"
     >
@@ -55,30 +54,44 @@ const bucketX = ref(50)
 const raindrops = ref([])
 const waterCollected = ref(0)
 const maxWater = ref(15)
+const winThreshold = ref(7.5)
 const timeLeft = ref(25)
 const gameActive = ref(true)
+let raindropId = 0
+let rainInterval = null
+let gameInterval = null
 
-const generateRain = () => {
-  setInterval(() => {
-    if (gameActive.value && timeLeft.value > 0) {
-      raindrops.value.push({
-        x: Math.random() * 90,
-        y: -5,
-        id: Math.random()
-      })
-    }
-  }, 200)
+const checkWin = () => {
+  if (waterCollected.value >= maxWater.value) {
+    gameActive.value = false
+    clearInterval(rainInterval)
+    clearInterval(gameInterval)
+  }
+}
+
+const spawnRaindrop = () => {
+  if (gameActive.value && timeLeft.value > 0) {
+    raindrops.value.push({
+      x: Math.random() * 90 + 2,
+      y: -2,
+      speed: 1.5 + Math.random() * 2,
+      id: ++raindropId,
+    })
+  }
 }
 
 const updateRain = () => {
-  raindrops.value = raindrops.value.filter(drop => {
-    drop.y += 2
+  raindrops.value = raindrops.value.filter((drop) => {
+    drop.y += drop.speed
 
-    // Detectar colisión con el cubo
-    if (drop.y > 85 && drop.y < 95) {
-      const distance = Math.abs(bucketX.value - drop.x)
-      if (distance < 5) {
+    if (drop.y > 82 && drop.y < 96) {
+      const bucketCenter = bucketX.value
+      const bucketWidth = 6
+      const distance = Math.abs(bucketCenter - drop.x)
+
+      if (distance < bucketWidth) {
         waterCollected.value++
+        checkWin()
         return false
       }
     }
@@ -88,16 +101,16 @@ const updateRain = () => {
 }
 
 const emitResult = () => {
-  emit('complete', waterCollected.value >= maxWater.value / 2 ? 'win' : 'lose')
+  emit('complete', waterCollected.value >= winThreshold.value ? 'win' : 'lose')
 }
 
 const handleKeyPress = (e) => {
   if (!gameActive.value) return
-  
+
   if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-    bucketX.value = Math.max(0, bucketX.value - 5)
+    bucketX.value = Math.max(2, bucketX.value - 6)
   } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-    bucketX.value = Math.min(95, bucketX.value + 5)
+    bucketX.value = Math.min(94, bucketX.value + 6)
   }
 }
 
@@ -107,90 +120,82 @@ const updateTimer = () => {
     updateRain()
   } else {
     gameActive.value = false
+    clearInterval(rainInterval)
   }
 }
 
 onMounted(() => {
-  generateRain()
+  rainInterval = setInterval(spawnRaindrop, 250)
+  gameInterval = setInterval(updateTimer, 100)
   window.addEventListener('keydown', handleKeyPress)
-  const interval = setInterval(updateTimer, 100)
-  
+
   onBeforeUnmount(() => {
     window.removeEventListener('keydown', handleKeyPress)
-    clearInterval(interval)
+    clearInterval(rainInterval)
+    clearInterval(gameInterval)
   })
 })
 </script>
 
 <style scoped>
 .minigame-container {
-  background: #111;
-  border: 3px solid #fff;
+  background: #0a0a1a;
+  border: 3px solid #00ccff;
   padding: 1.5rem;
   font-family: 'Courier New', monospace;
+  max-width: 700px;
+  margin: 0 auto;
 }
 
 .minigame-title {
   color: #00ccff;
   text-align: center;
-  text-shadow: 2px 2px 0 #0088ff;
+  text-shadow: 0 0 10px #0088ff;
   margin-bottom: 1rem;
 }
 
 .game-area {
   position: relative;
   width: 100%;
-  height: 350px;
-  background: linear-gradient(180deg, #003366 0%, #001144 100%);
-  border: 2px solid #00ffff;
+  height: 380px;
+  background: linear-gradient(180deg, #0a1128 0%, #162040 60%, #0a0a0a 100%);
+  border: 2px solid #00ccff;
   overflow: hidden;
   margin-bottom: 1rem;
 }
 
 .raindrop {
   position: absolute;
-  font-size: 1.2rem;
-  animation: fall linear forwards;
-}
-
-@keyframes fall {
-  to {
-    transform: translateY(400px);
-  }
+  width: 6px;
+  height: 12px;
+  background: linear-gradient(180deg, #88eeff, #00aacc);
+  border-radius: 0 0 50% 50%;
+  box-shadow:
+    0 0 4px #00ccff,
+    0 0 8px #0088ff,
+    inset 0 1px 2px rgba(255, 255, 255, 0.6);
 }
 
 .bucket {
   position: absolute;
-  bottom: 10px;
-  font-size: 2rem;
-  transition: left 0.1s;
-  animation: wobble 0.5s infinite;
-}
-
-@keyframes wobble {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-2deg); }
-  75% { transform: rotate(2deg); }
-}
-
-.water-level {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(180deg, #0099ff, #0066ff);
-  opacity: 0.3;
-  transition: height 0.1s;
+  bottom: 8px;
+  font-size: 2.2rem;
+  transition: left 0.08s;
+  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+  z-index: 10;
 }
 
 .game-stats {
   position: absolute;
   top: 10px;
-  right: 10px;
-  color: #00ffff;
+  right: 12px;
+  color: #00ccff;
   font-weight: bold;
   display: flex;
   gap: 1rem;
+  font-size: 0.95rem;
+  text-shadow: 0 0 4px rgba(0, 204, 255, 0.5);
+  z-index: 5;
 }
 
 .game-over {
@@ -198,29 +203,39 @@ onMounted(() => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.92);
   padding: 2rem;
   text-align: center;
   border: 2px solid #00ccff;
   color: #00ccff;
+  z-index: 20;
 }
 
 .game-over h3 {
   font-size: 2rem;
   margin: 0;
+  text-shadow: 0 0 10px rgba(0, 204, 255, 0.7);
+}
+
+.game-over p {
+  font-size: 1.1rem;
+  margin-top: 0.5rem;
 }
 
 .instructions {
-  color: #00ffff;
+  color: #88ccff;
   font-size: 0.9rem;
   margin-bottom: 1rem;
+  text-align: center;
 }
 
 .continue-btn {
+  display: block;
+  margin: 0 auto;
   padding: 0.8rem 2rem;
-  background: #00ffff;
+  background: #00ccff;
   color: #000;
-  border: 2px solid #00ffff;
+  border: 2px solid #00ccff;
   font-family: 'Courier New', monospace;
   font-weight: bold;
   cursor: pointer;
@@ -230,6 +245,6 @@ onMounted(() => {
 
 .continue-btn:hover {
   background: #000;
-  color: #00ffff;
+  color: #00ccff;
 }
 </style>

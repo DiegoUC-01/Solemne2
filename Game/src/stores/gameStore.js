@@ -9,8 +9,8 @@ export const useGameStore = defineStore('game', {
   state: () => ({
     day: 0,
     phase: 'menu',
-    food: 6,
-    water: 4,
+    food: 8,
+    water: 6,
     health: 100,
     morale: 100,
     currentEvent: null,
@@ -39,7 +39,7 @@ export const useGameStore = defineStore('game', {
       return this.health <= 0 || this.morale <= 0
     },
     isVictory() {
-      return this.day >= 25 && this.health > 0 && this.morale > 0
+      return this.day > 15 && this.health > 0 && this.morale > 0
     },
     survivalDays() {
       return this.day
@@ -53,8 +53,8 @@ export const useGameStore = defineStore('game', {
     startGame() {
       this.day = 0
       this.phase = 'intro'
-      this.food = 6
-      this.water = 4
+      this.food = 8
+      this.water = 6
       this.health = 100
       this.morale = 100
       this.currentEvent = fixedEvents[0]
@@ -210,13 +210,35 @@ export const useGameStore = defineStore('game', {
       if (effects.morale) this.morale = clamp(this.morale + effects.morale, 0, this.maxMorale)
     },
 
+    eventMatches(event) {
+      if (!event) return false
+      if (event.requiresFlag && !this.flags[event.requiresFlag]) return false
+      if (event.requiresNoFlag && this.flags[event.requiresNoFlag]) return false
+      if (event.requiresFlags) {
+        for (const flag of event.requiresFlags) {
+          if (!this.flags[flag]) return false
+        }
+      }
+      return true
+    },
+
+    resolveFixedEvent() {
+      const entry = fixedEvents[this.day]
+      if (!entry) return null
+      if (Array.isArray(entry)) {
+        return entry.find((e) => this.eventMatches(e)) || null
+      }
+      if (this.eventMatches(entry)) return entry
+      return null
+    },
+
     advanceDay() {
       if (this.isGameOver || this.isVictory) {
         this.phase = this.isVictory ? 'victory' : 'gameover'
         return
       }
 
-      if (this.day > 25) {
+      if (this.day > 15) {
         this.phase = 'victory'
         return
       }
@@ -238,35 +260,30 @@ export const useGameStore = defineStore('game', {
         return
       }
 
-      const fixedEvent = fixedEvents[this.day]
+      const fixedEvent = this.resolveFixedEvent()
 
       if (fixedEvent) {
-        if (fixedEvent.requiresFlag && !this.flags[fixedEvent.requiresFlag]) {
-          this.loadRandomEvent()
-        } else {
-          this.currentEvent = fixedEvent
-          this.phase = 'story'
-          this.currentSegment = 0
-          this.decisionResult = null
-        }
+        this.currentEvent = fixedEvent
+        this.phase = 'story'
+        this.currentSegment = 0
+        this.decisionResult = null
       } else {
         this.loadRandomEvent()
       }
     },
 
     applyDailyConsumption() {
-      const hasRefugees = this.flags.refugees
-      const foodCost = hasRefugees ? 2 : 1
-      const waterCost = hasRefugees ? 2 : 1
+      const foodCost = 1
+      const waterCost = 1
 
       this.food = clamp(this.food - foodCost, 0, this.maxStat)
       this.water = clamp(this.water - waterCost, 0, this.maxStat)
 
       if (this.food <= 0) {
-        this.health = clamp(this.health - 12, 0, this.maxHealth)
+        this.health = clamp(this.health - 6, 0, this.maxHealth)
       }
       if (this.water <= 0) {
-        this.health = clamp(this.health - 15, 0, this.maxHealth)
+        this.health = clamp(this.health - 8, 0, this.maxHealth)
       }
     },
 

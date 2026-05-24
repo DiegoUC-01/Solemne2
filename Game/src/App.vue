@@ -52,8 +52,8 @@
               <h2 class="rules-title">REGLAS DE SUPERVIVENCIA</h2>
               <div class="rules-list">
                 <div class="rule-item">
-                  <h3>📺 Sobrevive 25 dias</h3>
-                  <p>El rescate llegara en 25 dias. Debes mantener tus recursos con vida hasta entonces.</p>
+                  <h3>📺 Sobrevive 15 dias</h3>
+                  <p>El rescate llegara en 15 dias. Debes mantener tus recursos con vida hasta entonces.</p>
                 </div>
                 <div class="rule-item">
                   <h3>🍖 Gestiona tus recursos</h3>
@@ -224,7 +224,7 @@
           <div v-else-if="game.phase === 'victory'" class="victory-screen">
             <div class="victory-content">
               <h2 class="victory-title">¡RESCATADO!</h2>
-              <p class="victory-text">Has sobrevivido 25 dias</p>
+              <p class="victory-text">Has sobrevivido 15 dias</p>
               <div class="victory-stats">
                 <p>Comida restante: {{ game.food }}</p>
                 <p>Agua restante: {{ game.water }}</p>

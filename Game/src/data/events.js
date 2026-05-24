@@ -8,10 +8,10 @@ export const fixedEvents = {
         text: 'La pantalla de la televisión parpadea con interferencia. De repente, una transmisión de emergencia interrumpe toda programación...',
       },
       {
-        text: '"ATENCIÓN CIUDADANOS. UN BROTE INCONTROLADO ESTÁ TRANSFORMANDO A LAS PERSONAS EN SERES AGRESIVOS. NO SALGA DE SU HOGAR. RACIONE COMIDA Y AGUA."',
+        text: '"ATENCIÓN CIUDADANOS. UN BROTE INCONTROLABLE ESTÁ TRANSFORMANDO A LAS PERSONAS EN SERES AGRESIVOS. NO SALGA DE SU HOGAR. RACIONE COMIDA Y AGUA."',
       },
       {
-        text: '"UN OPERATIVO DE EVACUACIÓN SERÁ REALIZADO EN 25 DÍAS. MANTÉNGASE VIVO. QUÉDATE EN CASA. EL RESCATE VIENE."',
+        text: '"UN OPERATIVO DE EVACUACIÓN SERÁ REALIZADO EN 15 DÍAS. MANTÉNGASE VIVO. QUÉDATE EN CASA. EL RESCATE VIENE."',
       },
       {
         text: 'La pantalla vuelve a la normalidad. Miras por la ventana: las calles están vacías. Solo se escuchan gritos lejanos...',
@@ -19,13 +19,17 @@ export const fixedEvents = {
     ],
     type: 'intro',
   },
+
+  // ============================================================
+  // DÍA 1: DECISIÓN MORAL — Dejar entrar a la madre e hijo
+  // ============================================================
   1: {
     day: 1,
     title: 'DECISIÓN MORAL',
     location: 'casa',
     segments: [
       {
-        text: 'Es tu segundo día en el refugio. El silencio es interrumpido por golpes desesperados en la puerta.',
+        text: 'Es tu primer día completo en el refugio. El silencio es interrumpido por golpes desesperados en la puerta.',
       },
       {
         text: 'Mirás por la mirilla: una mujer con su hijo pequeño, ambos demacrados, con miedo en los ojos. La mujer susurra: "Por favor... mi hijo tiene hambre..."',
@@ -34,176 +38,719 @@ export const fixedEvents = {
     decisions: [
       {
         text: 'Dejar entrar',
-        effects: { food: -2, water: -1, health: 0, morale: 18 },
+        effects: { food: -1, water: 0, health: 0, morale: 18 },
         result: 'La mujer entra llorando de gratitud. Su hijo se esconde detrás de ella. Ahora no estás solo.',
         setsFlag: 'refugees',
       },
       {
         text: 'No abrir',
-        effects: { food: 0, water: 0, health: -3, morale: -20 },
+        effects: { food: 0, water: 0, health: -2, morale: -12 },
         result: 'Escuchas los pasos alejarse. Los gritos del niño te perseguirán toda la noche. El silencio vuelve, pero algo se rompió dentro de ti.',
-      },
-    ],
-  },
-  3: {
-    day: 3,
-    title: 'HAMBRE',
-    location: 'supermercado',
-    segments: [
-      {
-        text: 'El estómago te gruñe. Las provisiones escasean y necesitas actuar.',
-      },
-      {
-        text: 'A dos cuadras hay un supermercado. La vidriera está rota. Podría haber comida... pero también peligros.',
-      },
-    ],
-    decisions: [
-      {
-        text: 'Buscar comida en supermercado',
-        effects: {
-          success: { food: 4, water: 2, health: -8, morale: 5 },
-          failure: { food: -1, water: -1, health: -18, morale: -5 },
-        },
-        successRate: 0.5,
-        successResult: 'Encontrás latas y botellas de agua entre los escombros. Una figura te persigue pero lográs escapar.',
-        failureResult: 'Algo te ataca en la oscuridad del supermercado. Salís herido y con las manos vacías.',
-        random: true,
-      },
-      {
-        text: 'Comer comida podrida',
-        effects: { food: 2, water: 0, health: -22, morale: -8 },
-        result: 'La comida sabe horrible y te revuelve el estómago, pero al menos calma el hambre por ahora.',
+        setsFlag: 'd1_solo',
       },
     ],
   },
 
-  8: {
-    day: 8,
-    title: 'MANUAL',
-    location: 'casa',
-    segments: [
-      {
-        text: 'Revisando un cajón olvidado, encontrás un manual de primeros auxilios cubierto de polvo.',
-      },
-      {
-        text: 'Las páginas están intactas. Podrías aprender algo útil... o usar las hojas para mantener el fuego esta noche.',
-      },
-    ],
-    decisions: [
-      {
-        text: 'Aprender',
-        effects: { food: 0, water: 0, health: 12, morale: 10 },
-        result: 'Pasás horas estudiando técnicas de vendaje y purificación de agua. Conocimiento que puede salvarte la vida.',
-      },
-      {
-        text: 'Usar hojas para fuego',
-        effects: { food: 0, water: 0, health: -2, morale: -5 },
-        result: 'El fuego dura unas horas. Después te quedás en la oscuridad con la sensación de haber desperdiciado algo valioso.',
-      },
-    ],
-  },
-  12: {
-    day: 12,
-    title: 'COOPERACIÓN',
-    location: 'casa',
-    segments: [
-      {
-        text: 'La mujer que acogiste se acerca. "He estado observando el vecindario", dice. "Sé dónde hay provisiones. Puedo ayudarte a buscarlas."',
-      },
-      {
-        text: 'Su mirada es decidida. El niño juega en silencio en el rincón.',
-      },
-    ],
-    requiresFlag: 'refugees',
-    decisions: [
-      {
-        text: 'Aceptar',
-        effects: { food: 3, water: 1, health: 0, morale: 12 },
-        result: 'Salen juntos. Ella conoce atajos y escondites. Vuelven con provisiones y una renovada esperanza.',
-      },
-      {
-        text: 'Rechazar',
-        effects: { food: 0, water: -1, health: -4, morale: -9 },
-        result: 'Ella baja la mirada. El silencio entre ustedes se vuelve pesado. La desconfianza crece.',
-      },
-    ],
-  },
-  17: {
-    day: 17,
-    title: 'ATAQUE',
-    location: 'casa',
-    segments: [
-      {
-        text: 'Gritos en la calle. Golpes contra la puerta. ¡Saqueadores!',
-      },
-      {
-        text: 'Son tres o cuatro. Llevan palos y cadenas. La puerta no aguantará mucho más.',
-      },
-    ],
-    decisions: [
-      {
-        text: 'Luchar',
-        effects: {
-          success: { food: 2, water: 1, health: -12, morale: 8 },
-          failure: { food: -3, water: -2, health: -28, morale: -10 },
+  // ============================================================
+  // DÍA 2: RACIONAMIENTO (con refugiados) / EL SILENCIO (solo)
+  // ============================================================
+  2: [
+    {
+      day: 2,
+      title: 'RACIONAMIENTO',
+      location: 'casa',
+      requiresFlag: 'refugees',
+      segments: [
+        {
+          text: 'La mujer y su hijo se acomodaron en un rincón. El niño tiene fiebre. Ella te mira mientras revisás las pocas provisiones que quedan.',
         },
-        successRate: 0.6,
-        successResult: 'Lográs repelerlos con lo que encontraste. Estás lastimado pero victorioso.',
-        failureResult: 'Te superan en número. Roban tus provisiones y te dejan malherido en el suelo.',
-        random: true,
-      },
-      {
-        text: 'Negociar',
-        effects: { food: -3, water: -1, health: -2, morale: -10 },
-        result: 'Les das parte de tu comida a cambio de que se vayan. Sobrevivís, pero con menos recursos.',
-      },
-    ],
-  },
-  22: {
-    day: 22,
-    title: 'SEÑAL DE RESCATE',
+        {
+          text: 'El niño tose. "¿Hay suficiente para todos?", pregunta ella con voz temblorosa. Sabés que si compartís, los recursos se agotarán mucho más rápido.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Compartir honestamente',
+          effects: { food: -2, water: -1, health: 0, morale: 15 },
+          result: 'Compartís lo que tenés. Ella asiente, agradecida. "No lo olvidaré", dice. La confianza entre ustedes se fortalece. Pero los recursos bajan.',
+          setsFlag: 'd2_share',
+        },
+        {
+          text: 'Mentir sobre las provisiones',
+          effects: { food: 0, water: 0, health: 0, morale: -8 },
+          result: 'Escondés algunas latas. Le decís que es todo lo que hay. Ella te mira fijamente... quizás lo sabe. La incomodidad se instala.',
+          setsFlag: 'd2_lie',
+        },
+      ],
+    },
+    {
+      day: 2,
+      title: 'EL SILENCIO',
+      location: 'casa',
+      requiresNoFlag: 'refugees',
+      segments: [
+        {
+          text: 'El silencio en el departamento es absoluto. Ya no se escuchan los gritos del niño ni los ruegos de la madre.',
+        },
+        {
+          text: 'Revisás tus provisiones. Suficiente para una persona. Te preguntás si tomaste la decisión correcta. Afuera, la ciudad arde.',
+        },
+      ],
+    },
+  ],
+
+  // ============================================================
+  // DÍA 3: SUPERMERCADO — Tres ramas distintas
+  // ============================================================
+  3: [
+    {
+      day: 3,
+      title: 'SILENCIO INCÓMODO',
+      location: 'supermercado',
+      requiresFlag: 'd2_lie',
+      segments: [
+        {
+          text: 'La atmósfera es tensa. Ella apenas te habla. El niño llora de hambre. Las mentiras empiezan a pesar.',
+        },
+        {
+          text: 'A dos cuadras hay un supermercado. La vidriera está rota. Podrías ir a buscar provisiones... pero es arriesgado.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Ir al supermercado',
+          effects: { food: 5, water: 3, health: -3, morale: 3 },
+          result: 'Vas solo al anochecer. Encontrás latas y botellas entre los escombros. Volvés antes del amanecer con los brazos cargados.',
+          setsFlag: 'd3_super',
+        },
+        {
+          text: 'Quedarte a fortificar la casa',
+          effects: { food: 0, water: 0, health: 2, morale: -3 },
+          result: 'Clavás tablones en las ventanas. La casa está más segura... pero el hambre no desaparece.',
+          setsFlag: 'd3_stay',
+        },
+      ],
+    },
+    {
+      day: 3,
+      title: 'RECURSOS A CERO',
+      location: 'supermercado',
+      requiresFlag: 'd2_share',
+      segments: [
+        {
+          text: 'La mesa está vacía. Lo diste todo. El niño ya no llora, solo respira débilmente. Necesitás provisiones urgentemente.',
+        },
+        {
+          text: 'Ella se acerca. "Conozco el vecindario. Si vamos juntos al supermercado, podemos traer el doble". Sus ojos reflejan determinación.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Ir juntos al supermercado',
+          effects: { food: 8, water: 5, health: -2, morale: 15 },
+          result: 'Salen juntos al anochecer. Ella conoce atajos. Entre los dos cargan el doble de provisiones. La confianza se consolida.',
+          setsFlag: 'd3_super_allies',
+        },
+        {
+          text: 'Ir solo',
+          effects: { food: 5, water: 3, health: -4, morale: -2 },
+          result: 'Ella insiste en acompañarte pero te niegas. Vas solo al supermercado. Encontrás provisiones, pero la culpa te pesa.',
+          setsFlag: 'd3_super',
+        },
+      ],
+    },
+    {
+      day: 3,
+      title: 'DECISIÓN SUPERMERCADO',
+      location: 'supermercado',
+      requiresNoFlag: 'refugees',
+      segments: [
+        {
+          text: 'Tus provisiones se agotan. El estómago te gruñe. A dos cuadras hay un supermercado con la vidriera rota.',
+        },
+        {
+          text: 'No tenés a nadie que te ayude. Si no conseguís comida pronto, no sobrevivirás.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Ir al supermercado',
+          effects: { food: 5, water: 3, health: -3, morale: 3 },
+          result: 'Vas solo. Encontrás latas y agua entre los escombros. Una figura te observa desde la oscuridad pero lográs escapar.',
+          setsFlag: 'd3_super',
+        },
+        {
+          text: 'No ir (quedarse)',
+          effects: { food: 0, water: 0, health: -100, morale: 0 },
+          result: 'Te quedás en casa. Sin recursos. El hambre te consume. No sobrevivís a la noche.',
+        },
+      ],
+    },
+  ],
+
+  // ============================================================
+  // DÍA 4: VUELTA AL HOGAR / DISCUSIÓN POR HAMBRE
+  // ============================================================
+  4: [
+    {
+      day: 4,
+      title: 'VUELTA AL HOGAR',
+      location: 'casa',
+      requiresFlags: ['d3_super', 'refugees'],
+      segments: [
+        {
+          text: 'Volvés al refugio con provisiones. Ella te recibe con alivio. El niño sonríe por primera vez.',
+        },
+        {
+          text: 'Organizan las latas y el agua. Por un momento, casi se siente como un hogar. Pero sabés que esto es solo el principio.',
+        },
+      ],
+    },
+    {
+      day: 4,
+      title: 'VUELTA AL HOGAR',
+      location: 'casa',
+      requiresFlags: ['d3_super', 'd1_solo'],
+      segments: [
+        {
+          text: 'Volvés solo a tu refugio. Dejás las latas sobre la mesa. El silencio te recibe como siempre.',
+        },
+        {
+          text: 'Al menos tenés comida para unos días más. Pero la soledad pesa cada vez más.',
+        },
+      ],
+    },
+    {
+      day: 4,
+      title: 'VUELTA AL HOGAR',
+      location: 'casa',
+      requiresFlags: ['d3_super_allies'],
+      segments: [
+        {
+          text: 'Vuelven juntos al refugio, cargados de provisiones. La mujer sonríe por primera vez desde que llegó.',
+        },
+        {
+          text: 'El niño juega con una lata vacía. Por un instante, casi parece un día normal. Pero el mundo allá afuera sigue ardiendo.',
+        },
+      ],
+    },
+    {
+      day: 4,
+      title: 'DISCUSIÓN POR HAMBRE',
+      location: 'casa',
+      requiresFlag: 'd3_stay',
+      segments: [
+        {
+          text: 'No fuiste al supermercado. Las provisiones escasean. El niño llora de hambre y la mujer te mira con desesperación.',
+        },
+        {
+          text: '"¡No tenemos nada!", grita ella. "Mi hijo se está muriendo y vos no hiciste nada". La tensión explota en el refugio.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Ignorar la discusión',
+          effects: { food: 0, water: 0, health: 0, morale: -6 },
+          result: 'Te das la vuelta y no decís nada. Ella sigue gritando. La situación solo empeora. La desconfianza crece como una grieta en la pared.',
+          setsFlag: 'd4_ignore',
+        },
+        {
+          text: 'Echarlos del refugio',
+          effects: { food: 1, water: 1, health: -3, morale: -12 },
+          result: '"¡Fuera!", gritás. La mujer toma a su hijo y sale a la calle, entre lágrimas. Te quedás solo otra vez. El silencio es peor que antes.',
+          setsFlag: 'd4_kick',
+        },
+      ],
+    },
+  ],
+
+  // ============================================================
+  // DÍA 5: Minijuego — Recoger Agua de Lluvia (en minigameEvents)
+  // ============================================================
+
+  // ============================================================
+  // DÍA 6: LA RADIO / CONFRONTACIÓN
+  // ============================================================
+  6: [
+    {
+      day: 6,
+      title: 'LA RADIO',
+      location: 'casa',
+      requiresFlags: ['refugees', 'd2_share'],
+      segments: [
+        {
+          text: 'Encontrás una radio de emergencia entre los escombros. Funciona. Una voz metálica anuncia: "El rescate está en camino. Mantengan la calma."',
+        },
+        {
+          text: 'La mujer se sienta a tu lado. "Vamos a salir de esta", dice. Su voz es cálida. Por primera vez en días, sentís esperanza.',
+        },
+        {
+          text: 'Ella te prepara un poco de agua con las últimas gotas. "Gracias por confiar en nosotros", susurra.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Agradecer y consolarse mutuamente',
+          effects: { food: 0, water: 0, health: 0, morale: 20 },
+          result: 'Comparten un momento de calma. Hablan de sus vidas antes del apocalipsis. La moral del grupo se fortalece.',
+          setsFlag: 'd6_consuelo',
+        },
+      ],
+    },
+    {
+      day: 6,
+      title: 'CONFRONTACIÓN',
+      location: 'casa',
+      requiresFlags: ['refugees', 'd2_lie'],
+      segments: [
+        {
+          text: 'La radio de emergencia anuncia el rescate. Pero notás algo raro: falta una lata de comida. La mujer evita tu mirada.',
+        },
+        {
+          text: '"¿Dónde está la lata que faltaba?", preguntás. Ella se tensa. El niño empieza a llorar. Algo no está bien.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Enfadarte y pedir explicaciones',
+          effects: { food: 0, water: 0, health: -2, morale: -10 },
+          result: 'Gritás. Ella confiesa entre lágrimas que se la dio al niño porque tenía hambre. La discusión sube de tono. Terminás echándolos del refugio.',
+          setsFlag: 'd6_kicked',
+        },
+        {
+          text: 'Callar y perdonar',
+          effects: { food: -1, water: 0, health: 0, morale: -3 },
+          result: 'Respirás hondo y no decís nada. Ella baja la mirada. "Lo siento", susurra. La confianza está dañada pero al menos siguen juntos.',
+          setsFlag: 'd6_perdon',
+        },
+      ],
+    },
+    {
+      day: 6,
+      title: 'TE ROBAN Y SE VAN',
+      location: 'casa',
+      requiresFlag: 'd4_ignore',
+      segments: [
+        {
+          text: 'Despertás y algo no está bien. La mujer y el niño ya no están. Revisás tus provisiones: se llevaron la mitad.',
+        },
+        {
+          text: 'Sobre la mesa, una nota garabateada: "Perdón. Mi hijo no podía más." Estás solo otra vez, y con menos recursos.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Seguir adelante',
+          effects: { food: -2, water: -1, health: -3, morale: -8 },
+          result: 'No hay nada que hacer. Se fueron. Te quedás mirando la nota. La soledad es absoluta.',
+          setsFlag: 'd6_alone',
+        },
+      ],
+    },
+    {
+      day: 6,
+      title: 'LA RADIO',
+      location: 'casa',
+      requiresFlags: ['d1_solo'],
+      segments: [
+        {
+          text: 'Encontrás una radio de emergencia entre los escombros. Una voz metálica dice: "El rescate está en camino."',
+        },
+        {
+          text: 'Estás solo. Nadie celebra la noticia con vos. Pero al menos hay una esperanza.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Escuchar la radio',
+          effects: { food: 0, water: 0, health: 0, morale: 5 },
+          result: 'La radio crepita. Escuchás mensajes de otros supervivientes. No estás completamente solo en el mundo.',
+        },
+      ],
+    },
+    {
+      day: 6,
+      title: 'DESPUÉS DE LA TORMENTA',
+      location: 'casa',
+      requiresFlag: 'd4_kick',
+      segments: [
+        {
+          text: 'Ya no están. Los echaste. Por un lado, tenés más comida para vos. Por otro, el silencio es ensordecedor.',
+        },
+        {
+          text: 'La radio de emergencia anuncia el rescate. "Ojalá estén bien allá afuera", pensás.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Seguir adelante solo',
+          effects: { food: 0, water: 0, health: 0, morale: -5 },
+          result: 'Estás solo. Es lo que querías, ¿no? Pero la culpa no te abandona.',
+          setsFlag: 'd6_alone',
+        },
+      ],
+    },
+  ],
+
+  // ============================================================
+  // DÍA 7: BOMBARDEO NOCTURNO
+  // ============================================================
+  7: {
+    day: 7,
+    title: 'BOMBARDEO NOCTURNO',
     location: 'casa',
     segments: [
       {
-        text: 'La radio crepita. Entre la estática, una voz clara: "Equipo de rescate en camino. Llegaremos en 3 días. Preparen señales de localización."',
+        text: 'Una noche, el cielo se ilumina de naranja. Explosiones sacuden la ciudad. Los cristales de las ventanas vibran.',
       },
       {
-        text: 'Tu corazón se acelera. Solo 3 días más. Pero necesitas que te encuentren.',
+        text: 'El bombardeo se acerca. Tenés que decidir rápido dónde refugiarte. Cada decisión tiene consecuencias.',
       },
     ],
     decisions: [
       {
-        text: 'Preparar señal de humo',
-        effects: { food: -1, water: 0, health: 0, morale: 18 },
-        result: 'Armás una señal de humo en la azotea con trapos y madera. La esperanza renace en tu pecho.',
+        text: 'Refugiarte en el sótano',
+        effects: { food: -1, water: 0, health: 6, morale: 0 },
+        result: 'Bajás al sótano justo a tiempo. Las explosiones sacuden el edificio pero estás a salvo. Perdiste algunas provisiones en la carrera.',
+        setsFlag: 'd7_sotano',
       },
       {
-        text: 'Ignorar',
-        effects: { food: 0, water: 0, health: -3, morale: -15 },
-        result: 'Apagás la radio. ¿Y si es una trampa? La duda te carcome pero el miedo te paraliza.',
+        text: 'Quedarte en la casa',
+        effects: { food: 0, water: 0, health: -6, morale: -5 },
+        result: 'Te quedás protegiendo las provisiones. Una explosión cercana derrumba parte del techo. Salís lastimado pero conservaste todo.',
+        setsFlag: 'd7_casa',
       },
     ],
   },
-  25: {
-    day: 25,
-    title: '¡RESCATADO!',
-    location: 'rescate',
-    type: 'victory',
+
+  // ============================================================
+  // DÍA 8: FIEBRE POR RADIACIÓN
+  // ============================================================
+  8: [
+    {
+      day: 8,
+      title: 'FIEBRE POR RADIACIÓN',
+      location: 'casa',
+      requiresFlag: 'refugees',
+      segments: [
+        {
+          text: 'Te despertás empapado en sudor. La radiación del bombardeo te pasó factura. Fiebre alta. Apenas podés moverte.',
+        },
+        {
+          text: 'La mujer coloca un trapo húmedo en tu frente. "No te voy a dejar solo", dice. Su hijo te trae un poco de agua.',
+        },
+        {
+          text: 'Gracias a sus cuidados, la fiebre no es tan grave. Te recuperás más rápido de lo esperado.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Aceptar su ayuda',
+          effects: { food: -1, water: -1, health: 5, morale: 10 },
+          result: 'Ella te cuida durante la noche. Te da agua y te limpia el sudor. "Estamos juntos en esto", dice. Te recuperás.',
+        },
+      ],
+    },
+    {
+      day: 8,
+      title: 'FIEBRE POR RADIACIÓN',
+      location: 'casa',
+      requiresNoFlag: 'refugees',
+      segments: [
+        {
+          text: 'Te despertás ardiendo en fiebre. La radiación del bombardeo te golpeó fuerte. No podés levantarte de la cama.',
+        },
+        {
+          text: 'Estás solo. No hay nadie que te traiga agua ni te cuide. Las horas pasan y la fiebre no cede.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Resistir como puedas',
+          effects: { food: -1, water: -1, health: -8, morale: -5 },
+          result: 'La fiebre te consume. Pasás el día en cama. Apenas podés beber agua. Pero sobrevivís... por ahora.',
+        },
+      ],
+    },
+  ],
+
+  // ============================================================
+  // DÍA 9: VIAJE A LA FARMACIA
+  // ============================================================
+  9: {
+    day: 9,
+    title: 'VIAJE A LA FARMACIA',
+    location: 'farmacia',
     segments: [
       {
-        text: 'Un rugido en el cielo. El sonido más hermoso que escuchaste en tu vida: un helicóptero.',
+        text: 'Necesitás medicina urgente. La fiebre bajó pero la tos persiste. A tres cuadras hay una farmacia.',
       },
       {
-        text: 'La señal de humo funcionó. El helicóptero desciende sobre el edificio vecino. Personas con trajes de protección corren hacia ti.',
+        text: 'Pero salir de día es peligroso: hay saqueadores. Ir de noche es más seguro pero no verás bien. ¿Qué hacés?',
+      },
+    ],
+    decisions: [
+      {
+        text: 'Ir de día (+visibilidad, más riesgo)',
+        effects: {
+          success: { food: 0, water: 0, health: 15, morale: 5 },
+          failure: { food: -1, water: 0, health: -12, morale: -6 },
+        },
+        successRate: 0.5,
+        successResult: 'Encontrás la farmacia. Agarrás medicina y vendas. Lográs escapar antes de que lleguen los saqueadores.',
+        failureResult: 'Los saqueadores te ven. Te golpean y te roban. Volvés al refugio herido y sin medicina.',
+        random: true,
+        setsFlag: 'd9_day',
       },
       {
-        text: '"¡Estás a salvo!", dice uno de ellos. Mientras te suben al helicóptero, mirás hacia abajo. El mundo cambió para siempre... pero vos sobreviviste.',
-      },
-      {
-        text: 'Has sobrevivido 25 días. FIN.',
+        text: 'Ir de noche (-visibilidad, menos riesgo)',
+        effects: { food: 0, water: 0, health: 8, morale: 3 },
+        result: 'Vas de noche. Cuesta encontrar lo que necesitás en la oscuridad, pero al menos no hay saqueadores. Volvés con algo de medicina.',
+        setsFlag: 'd9_night',
       },
     ],
   },
+
+  // ============================================================
+  // DÍA 10: Minijuego — Evitar Asaltantes (en minigameEvents)
+  // ============================================================
+
+  // ============================================================
+  // DÍA 11: RADIO - RESCATE EN 4 DÍAS
+  // ============================================================
+  11: {
+    day: 11,
+    title: 'RADIO: RESCATE EN 4 DÍAS',
+    location: 'casa',
+    segments: [
+      {
+        text: 'La radio crepita con fuerza. Una voz clara: "Equipo de rescate en camino. Helicóptero llegará en 4 días. Repito: 4 días."',
+      },
+      {
+        text: 'Tu corazón se acelera. El rescate está cerca. Pero... ¿deberías responder? Revelar tu posición podría atraer a otros.',
+      },
+    ],
+    decisions: [
+      {
+        text: 'Responder a la radio',
+        effects: { food: 0, water: 0, health: 0, morale: 10 },
+        result: '"¡Aquí hay supervivientes!", gritás por la radio. Una voz responde: "Recibido. Vamos hacia allá." Pero también alertaste a otros de tu presencia.',
+        setsFlag: 'd11_responded',
+      },
+      {
+        text: 'Solo escuchar',
+        effects: { food: 0, water: 0, health: 0, morale: 3 },
+        result: 'Escuchás en silencio. Anotás las coordenadas. Al menos nadie más sabe dónde estás.',
+        setsFlag: 'd11_listened',
+      },
+    ],
+  },
+
+  // ============================================================
+  // DÍA 12: BANDIDOS
+  // ============================================================
+  12: [
+    {
+      day: 12,
+      title: 'BANDIDOS',
+      location: 'casa',
+      requiresFlag: 'refugees',
+      segments: [
+        {
+          text: 'Golpes fuertes en la puerta. Tres hombres armados con palos y cadenas. "¡Sabemos que tienen comida! ¡Abran o tiramos la puerta!"',
+        },
+        {
+          text: 'La mujer toma al niño y se esconde en el rincón. Te mira. Están juntos en esto. Podés pelear... o negociar.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Pelear',
+          effects: { food: 0, water: 0, health: -15, morale: 8 },
+          result: 'Agarrás lo que encontrás y peleás. Con ayuda de la mujer, logran repelerlos. Estás herido pero conservaste los suministros.',
+          setsFlag: 'd12_fought',
+        },
+        {
+          text: 'Negociar',
+          effects: { food: -3, water: -2, health: -2, morale: -10 },
+          result: 'Les das casi todo a cambio de que se vayan. Se llevan la mayoría de tus provisiones. El niño llora de hambre. Pero están vivos.',
+          setsFlag: 'd12_negotiated',
+        },
+      ],
+    },
+    {
+      day: 12,
+      title: 'BANDIDOS',
+      location: 'casa',
+      requiresNoFlag: 'refugees',
+      segments: [
+        {
+          text: 'La puerta se sacude. Tres hombres armados. "¡Sabemos que estás solo! ¡Danos todo o te matamos!"',
+        },
+        {
+          text: 'Estás solo. No hay nadie que te ayude. Pelear sería un suicidio. Pero negociar significa quedarte sin nada.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Pelear',
+          effects: { food: 0, water: 0, health: -100, morale: 0 },
+          result: 'Intentás pelear pero te superan en número. Los bandidos no tienen piedad. Es el fin.',
+        },
+        {
+          text: 'Negociar',
+          effects: { food: -3, water: -2, health: -2, morale: -10 },
+          result: 'Les das todo. Se ríen y se van. Te quedás solo, sin provisiones y con el orgullo destrozado.',
+          setsFlag: 'd12_negotiated_solo',
+        },
+      ],
+    },
+  ],
+
+  // ============================================================
+  // DÍA 13: ÚLTIMAS RESERVAS
+  // ============================================================
+  13: [
+    {
+      day: 13,
+      title: 'ÚLTIMAS RESERVAS',
+      location: 'casa',
+      requiresFlags: ['refugees', 'd12_fought'],
+      segments: [
+        {
+          text: 'Estás molido por la pelea. Los puntos de sutura improvisados duelen. Pero lo lograron: conservaron los suministros.',
+        },
+        {
+          text: 'Es un día de reposo forzado. La mujer te ayuda a cambiar los vendajes. "Solo dos días más", dice. El rescate está cerca.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Descansar',
+          effects: { food: 0, water: 0, health: 8, morale: 8 },
+          result: 'Pasás el día descansando. El cuerpo se recupera lentamente. Mañana será otro día. Solo dos días para el rescate.',
+          setsFlag: 'd13_rest',
+        },
+      ],
+    },
+    {
+      day: 13,
+      title: 'ÚLTIMAS RESERVAS',
+      location: 'casa',
+      requiresFlags: ['refugees', 'd12_negotiated'],
+      segments: [
+        {
+          text: 'Solo queda una lata escondida que los bandidos no encontraron. La ponés sobre la mesa. Tres personas, una lata.',
+        },
+        {
+          text: 'El niño está pálido. Tiene fiebre y apenas puede mantenerse despierto. La madre te mira. "Por favor... dale la mitad a mi hijo."',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Darle la lata al niño',
+          effects: { food: 0, water: 0, health: -5, morale: 12 },
+          result: 'Le das la lata al niño. Come despacio. La madre te abraza llorando. Te quedás sin comer, pero tu conciencia está limpia.',
+          setsFlag: 'd13_gave',
+        },
+        {
+          text: 'Dividirla entre los tres',
+          effects: { food: -1, water: 0, health: -6, morale: -3 },
+          result: 'Dividís la lata en tres porciones diminutas. Nadie se llena, pero al menos es algo. El niño sigue débil.',
+          setsFlag: 'd13_divided',
+        },
+      ],
+    },
+    {
+      day: 13,
+      title: 'ÚLTIMAS RESERVAS',
+      location: 'casa',
+      requiresFlags: ['d12_negotiated_solo'],
+      segments: [
+        {
+          text: 'Solo queda una lata. La escondiste bien y los bandidos no la encontraron. Es todo lo que tenés.',
+        },
+        {
+          text: 'Estás solo. La moral está por los suelos. Pero el rescate llegará en dos días. Tenés que resistir.',
+        },
+      ],
+      decisions: [
+        {
+          text: 'Comer ahora',
+          effects: { food: 0, water: 0, health: 3, morale: 2 },
+          result: 'Abrís la lata y comés. Sabe a gloria. Pero ya no tenés nada para mañana.',
+          setsFlag: 'd13_ate',
+        },
+        {
+          text: 'Racionar para mañana',
+          effects: { food: 0, water: 0, health: -3, morale: -2 },
+          result: 'Guardás la lata para mañana. El hambre te consume, pero al menos tendrás algo después.',
+          setsFlag: 'd13_rationed',
+        },
+      ],
+    },
+  ],
+
+  // ============================================================
+  // DÍA 14: LLUVIA NEGRA
+  // ============================================================
+  14: [
+    {
+      day: 14,
+      title: 'LLUVIA NEGRA',
+      location: 'casa',
+      requiresFlag: 'd13_rest',
+      segments: [
+        {
+          text: 'Afuera cae una lluvia oscura, radioactiva. No se puede salir. El refugio es lo único que los protege.',
+        },
+        {
+          text: 'Todavía estás adolorido por la pelea con los bandidos, pero gracias al día de reposo podés moverte. La mujer y el niño están a salvo.',
+        },
+        {
+          text: '"Mañana es el día", dice ella. "El helicóptero viene mañana." Se toman de las manos. Solo queda resistir una noche más.',
+        },
+      ],
+    },
+    {
+      day: 14,
+      title: 'LLUVIA NEGRA',
+      location: 'casa',
+      requiresFlags: ['refugees', 'd12_negotiated'],
+      segments: [
+        {
+          text: 'La lluvia negra golpea las ventanas. No se puede salir. Pero adentro, la situación es peor.',
+        },
+        {
+          text: 'El niño ha empeorado. La fiebre, el hambre y la deshidratación le pasaron factura. La madre lo sostiene en brazos.',
+        },
+        {
+          text: 'No hay nada que puedas hacer. El niño cierra los ojos y no los vuelve a abrir. La madre grita, llora, se derrumba.',
+        },
+      ],
+    },
+    {
+      day: 14,
+      title: 'LLUVIA NEGRA',
+      location: 'casa',
+      requiresFlags: ['d12_negotiated_solo'],
+      segments: [
+        {
+          text: 'La lluvia negra golpea las ventanas. No se puede salir. Estás solo, encerrado en tu refugio.',
+        },
+        {
+          text: 'Te sentás en un rincón y esperás. El sonido de la lluvia es hipnótico. Mañana es el día del rescate.',
+        },
+        {
+          text: 'Solo una noche más. Lo has logrado. Contra todo pronóstico, llegaste hasta aquí.',
+        },
+      ],
+    },
+  ],
+
+  // ============================================================
+  // DÍA 15: Minijuego — Escape Final (en minigameEvents)
+  // ============================================================
 }
 
 export const randomEvents = [
@@ -214,6 +761,8 @@ export const randomEvents = [
     ],
     effects: { food: 2, water: 1, health: 2, morale: 3 },
     location: 'calle',
+    givesItem: 'bandages',
+    giveQuantity: 1,
   },
   {
     title: 'Extraño amable',
@@ -230,6 +779,8 @@ export const randomEvents = [
     ],
     effects: { food: 0, water: 0, health: 18, morale: 5 },
     location: 'calle',
+    givesItem: 'medicine',
+    giveQuantity: 1,
   },
   {
     title: 'Lluvia',
@@ -254,6 +805,8 @@ export const randomEvents = [
     ],
     effects: { food: 0, water: 0, health: 3, morale: 12 },
     location: 'casa',
+    givesItem: 'radio',
+    giveQuantity: 1,
   },
 ]
 
@@ -269,17 +822,17 @@ export const minigameEvents = {
   10: {
     day: 10,
     type: 'findCans',
-    title: 'BUSCAR LATAS',
+    title: 'EVITAR ASALTANTES',
     location: 'supermercado',
-    win: { food: 4, morale: 8, message: 'Encontraste 5 latas de comida.' },
-    lose: { food: -2, morale: -5, message: 'No alcanzaste a juntar suficientes latas.' },
+    win: { food: 4, morale: 8, message: 'Esquivaste a los asaltantes y conseguiste provisiones.' },
+    lose: { food: -2, morale: -5, message: 'Los asaltantes te atraparon. Perdiste provisiones.' },
   },
   15: {
     day: 15,
     type: 'escape',
     title: 'ESCAPE FINAL',
     location: 'calle',
-    win: { health: 5, morale: 15, message: 'Esquivaste las bombas y llegaste al helicóptero.' },
+    win: { health: 5, morale: 15, message: 'Esquivaste las bombas y llegaste al helicóptero. ¡RESCATADO!' },
     lose: { health: -20, morale: -10, message: 'Una bomba te golpeó de lleno.' },
   },
 }

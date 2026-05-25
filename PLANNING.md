@@ -123,23 +123,23 @@ Debido a revisión de la semana 2 que fue mala, se decidio empezar de nuevo desd
 ## Semana 3 – Implementación de Desarrollo de Mecánicas y Lógica del Juego(codigo)
  Tareas planificadas:
 ### Agregar Store del juego y datos de eventos:
-- [ ] Implementación de events.js
-- [ ] Implementación de gameStore.js
+- [x] Implementación de events.js
+- [x] Implementación de gameStore.js
 ### Agregar componentes Visuales Estilo Retro y App Principal:
-- [ ] Implementación de main.js
-- [ ] Implementación de retro.css
-- [ ] Implementación de StatBar.vue
-- [ ] Implementación de StoryText.vue
-- [ ] Implementación de DecisionButtons.vue
-- [ ] Implementación de PixelBackground.vue
-- [ ] Implementación de SceneArt.vue
-- [ ] Implementación de App.vue
+- [x] Implementación de main.js
+- [x] Implementación de retro.css
+- [x] Implementación de StatBar.vue
+- [x] Implementación de StoryText.vue
+- [x] Implementación de DecisionButtons.vue
+- [x] Implementación de PixelBackground.vue
+- [x] Implementación de SceneArt.vue
+- [x] Implementación de App.vue
 ### Agregar minijuegos interactivos para dias 5, 10 y 15:
-- [ ] Implementación de CatchRainGame.vue
-- [ ] Implementación de FindcansGame.vue
-- [ ] Implementación de EscapeGame.vue
+- [x] Implementación de CatchRainGame.vue
+- [x] Implementación de FindcansGame.vue
+- [x] Implementación de EscapeGame.vue
 ### Agregar Sistema de audio con web Audio API:
-- [ ] Implementación de useAudio.js
+- [x] Implementación de useAudio.js
 
  Objetivo de la semana:
 Tener una Base del Juego completamente jugable del día 0 al día 15, con todas las decisiones afectando recursos y mostrando consecuencias.
@@ -159,22 +159,22 @@ Tener una Base del Juego completamente jugable del día 0 al día 15, con todas 
  Tareas planificadas:
 ### Agregar Pruebas unitaria del store :
 
-- [ ] Implementación de gameStore.spec.js
+- [x] Implementación de gameStore.spec.js
       
 ### Agragar Pruebas unitarias (Vitest):
 
 
-- [ ] Configurar Vitest en vite.config.js
+- [x] Configurar Vitest en vite.config.js
 
-- [ ] Implementar pruebas para gameStore.js:
+- [x] Implementar pruebas para gameStore.js:
 
-- [ ] Verificar que applyDecision modifica recursos correctamente
+- [x] Verificar que applyDecision modifica recursos correctamente
 
-- [ ] Verificar que consumeDaily funciona con/without refugiados
+- [x] Verificar que consumeDaily funciona con/without refugiados
 
-- [ ] Verificar que checkGameStatus detecta game over y victoria
+- [x] Verificar que checkGameStatus detecta game over y victoria
 
-- [ ] Verificar que resetGame vuelve al estado inicial
+- [x] Verificar que resetGame vuelve al estado inicial
 
 ### Implementar pruebas para componentes:
 

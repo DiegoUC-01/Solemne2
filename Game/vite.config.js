@@ -5,5 +5,11 @@ export default defineConfig({
   plugins: [vue()],
   test: {
     environment: 'jsdom',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'lcov'],
+      include: ['src/**/*.{js,vue}'],
+      exclude: ['src/tests/**', 'src/main.js'],
+    },
   },
 })

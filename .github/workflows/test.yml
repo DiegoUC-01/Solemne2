@@ -10,6 +10,9 @@ jobs:
   test:
     name: Vitest
     runs-on: ubuntu-latest
+    defaults:
+  run:
+    working-directory: ./Game
 
     steps:
       - name: Checkout código

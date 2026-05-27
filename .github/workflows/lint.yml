@@ -10,6 +10,9 @@ jobs:
   lint:
     name: Oxlint
     runs-on: ubuntu-latest
+    defaults:
+  run:
+    working-directory: ./Game
 
     steps:
       - name: Checkout código

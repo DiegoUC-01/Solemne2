@@ -10,6 +10,9 @@ jobs:
   build:
     name: Vite Build
     runs-on: ubuntu-latest
+    defaults:
+  run:
+    working-directory: ./Game
 
     steps:
       - name: Checkout código

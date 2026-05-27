@@ -346,7 +346,7 @@ import StatBar from './components/StatBar.vue'
 import StoryText from './components/StoryText.vue'
 import DecisionButtons from './components/DecisionButtons.vue'
 import CatchRainGame from './components/minigames/CatchRainGame.vue'
-import FindCansGame from './components/minigames/FindCansGame.vue'
+import FindCansGame from './components/minigames/FindcansGame.vue'
 import EscapeGame from './components/minigames/EscapeGame.vue'
 
 const game = useGameStore()

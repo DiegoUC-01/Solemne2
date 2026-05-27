@@ -46,9 +46,11 @@
 </template>
 
 <script setup>
+import { useGameStore } from '../../stores/gameStore'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 const emit = defineEmits(['complete'])
+const gameStore = useGameStore()
 
 const bucketX = ref(50)
 const raindrops = ref([])
@@ -74,7 +76,7 @@ const spawnRaindrop = () => {
     raindrops.value.push({
       x: Math.random() * 90 + 2,
       y: -2,
-      speed: 1.5 + Math.random() * 2,
+      speed: 2.2 + Math.random() * 2.8,
       id: ++raindropId,
     })
   }
@@ -115,25 +117,59 @@ const handleKeyPress = (e) => {
 }
 
 const updateTimer = () => {
+
+  if (!gameActive.value) return
+
   if (timeLeft.value > 0) {
+
     timeLeft.value -= 0.1
+
     updateRain()
+
   } else {
+
     gameActive.value = false
+
     clearInterval(rainInterval)
+    clearInterval(gameInterval)
+
+    // SI NO LLEGASTE A 15 → GAME OVER
+    if (waterCollected.value < maxWater.value) {
+
+      setTimeout(() => {
+
+        gameStore.health = 0
+        gameStore.gameOverReason = 'dehydration'
+        gameStore.phase = 'gameover'
+
+      }, 200)
+
+    } else {
+
+      // GANAR
+      setTimeout(() => {
+        emit('complete', 'win')
+      }, 300)
+    }
   }
 }
 
 onMounted(() => {
-  rainInterval = setInterval(spawnRaindrop, 250)
-  gameInterval = setInterval(updateTimer, 100)
-  window.addEventListener('keydown', handleKeyPress)
 
-  onBeforeUnmount(() => {
-    window.removeEventListener('keydown', handleKeyPress)
-    clearInterval(rainInterval)
-    clearInterval(gameInterval)
-  })
+  rainInterval = setInterval(spawnRaindrop, 600)
+
+  gameInterval = setInterval(updateTimer, 80)
+
+  window.addEventListener('keydown', handleKeyPress)
+})
+
+onBeforeUnmount(() => {
+
+  window.removeEventListener('keydown', handleKeyPress)
+
+  clearInterval(rainInterval)
+
+  clearInterval(gameInterval)
 })
 </script>
 

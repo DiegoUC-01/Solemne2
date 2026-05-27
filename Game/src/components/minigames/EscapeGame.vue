@@ -1,111 +1,254 @@
 <template>
   <div class="minigame-container">
-    <h2 class="minigame-title">🚁 ESCAPE FINAL</h2>
+
+    <h2 class="minigame-title">
+      🚁 ESCAPE FINAL
+    </h2>
 
     <div class="game-area">
-      <div class="helicopter">🚁</div>
 
+      <!-- HELICÓPTERO -->
+      <div class="helicopter">
+        🚁
+      </div>
+
+      <!-- ZONA DE ESCAPE -->
+      <div class="escape-zone">
+        ESCAPE
+      </div>
+
+      <!-- VIDAS -->
+      <div class="lives">
+        <span v-for="n in lives" :key="n">❤️</span>
+      </div>
+
+      <!-- JUGADOR -->
       <div
         class="player"
-        :style="{ left: playerX + '%', bottom: playerY + '%' }"
+        :style="{
+          left: playerX + '%',
+          bottom: playerY + '%'
+        }"
       ></div>
 
+      <!-- BOMBAS -->
       <div
         v-for="bomb in bombs"
         :key="bomb.id"
         class="bomb"
         :style="{
           left: bomb.x + '%',
-          top: bomb.y + '%',
+          top: bomb.y + '%'
         }"
       >
         💣
       </div>
 
-      <div v-if="timeLeft <= 0 || escaped || health <= 0" class="game-over">
-        <h3 v-if="escaped">¡RESCATADO!</h3>
-        <h3 v-else-if="health <= 0">¡DERRIBADO!</h3>
-        <h3 v-else>¡SE ACABÓ EL TIEMPO!</h3>
-        <p v-if="escaped">Alcanzaste el helicóptero</p>
-        <p v-else-if="health <= 0">Las bombas te alcanzaron</p>
-        <p v-else>No llegaste a tiempo</p>
+      <!-- VICTORIA -->
+      <div
+        v-if="escaped"
+        class="game-over"
+      >
+        <h3>¡RESCATADO!</h3>
+
+        <p>
+          Alcanzaste el helicóptero
+        </p>
       </div>
 
+      <!-- STATS -->
       <div class="game-stats">
-        <span>Tiempo: {{ Math.ceil(timeLeft) }}s</span>
-        <span>Vida: {{ health }}/100</span>
+
+        <span>
+          Tiempo: {{ Math.ceil(timeLeft) }}s
+        </span>
+
       </div>
+
     </div>
 
+    <!-- INSTRUCCIONES -->
     <div class="instructions">
-      Usa ← → ↑ ↓ o WASD. Esquiva bombas y llega al helicóptero en 20 segundos.
+      Usa ← → ↑ ↓ o WASD.<br>
+      Esquiva bombas y llega al helicóptero.
     </div>
 
+    <!-- BOTÓN SOLO SI GANA -->
     <button
-      v-if="timeLeft <= 0 || escaped || health <= 0"
+      v-if="escaped"
       class="continue-btn"
       @click="emitResult"
     >
       Continuar
     </button>
+
   </div>
 </template>
 
 <script setup>
+import { useGameStore } from '../../stores/gameStore'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 const emit = defineEmits(['complete'])
 
+const gameStore = useGameStore()
+
 const playerX = ref(50)
 const playerY = ref(5)
+
 const bombs = ref([])
+
 const escaped = ref(false)
-const health = ref(100)
+
+const lives = ref(3)
+
 const timeLeft = ref(20)
+
 const gameActive = ref(true)
+
 let bombId = 0
 let bombInterval = null
 let gameInterval = null
 
-const checkGameOver = () => {
-  if (health.value <= 0 || escaped.value) {
-    gameActive.value = false
-    clearInterval(bombInterval)
-    clearInterval(gameInterval)
-  }
+const spawnBomb = () => {
+
+  if (!gameActive.value || timeLeft.value <= 0) return
+
+  bombs.value.push({
+    x: Math.random() * 88 + 2,
+    y: 15,
+
+    // MÁS LENTO
+    speed: 0.7 + Math.random() * 1.1,
+
+    id: ++bombId,
+  })
 }
 
-const spawnBomb = () => {
-  if (gameActive.value && timeLeft.value > 0) {
-    bombs.value.push({
-      x: Math.random() * 88 + 2,
-      y: -3,
-      speed: 1 + Math.random() * 2,
-      id: ++bombId,
-    })
-  }
+const triggerGameOver = () => {
+
+  gameActive.value = false
+
+  clearInterval(bombInterval)
+  clearInterval(gameInterval)
+
+  setTimeout(() => {
+
+    gameStore.health = 0
+    gameStore.gameOverReason = 'bombs'
+    gameStore.phase = 'gameover'
+
+  }, 200)
 }
 
 const updateBombs = () => {
+
   bombs.value = bombs.value.filter((bomb) => {
+
+    // MOVER BOMBA
     bomb.y += bomb.speed
 
-    if (bomb.y > playerY.value - 6 && bomb.y < playerY.value + 6) {
-      const distance = Math.abs(playerX.value - bomb.x)
-      if (distance < 8) {
-        health.value = Math.max(0, health.value - 20)
-        checkGameOver()
+    // POSICIÓN REAL DEL JUGADOR
+    const playerRealY = 100 - playerY.value
+
+    // DISTANCIAS
+    const xDistance = Math.abs(playerX.value - bomb.x)
+    const yDistance = Math.abs(playerRealY - bomb.y)
+
+    // ZONA SEGURA CERCA DEL HELICÓPTERO
+    const safeZone = playerY.value > 80
+
+    // COLISIÓN REAL
+    if (
+      !safeZone &&
+      xDistance < 4 &&
+      yDistance < 5
+    ) {
+
+      lives.value--
+
+      // ELIMINAR BOMBA
+      if (lives.value <= 0) {
+
+        triggerGameOver()
       }
+
+      return false
     }
 
-    return bomb.y < 100
+    // DESAPARECER BOMBAS
+    return bomb.y < 92
   })
 
-  if (playerY.value > 88 && playerX.value > 42 && playerX.value < 58) {
+  // ESCAPE
+  if (
+    playerY.value > 84 &&
+    playerX.value > 42 &&
+    playerX.value < 58
+  ) {
+
     escaped.value = true
+
     gameActive.value = false
+
     clearInterval(bombInterval)
     clearInterval(gameInterval)
+
+    setTimeout(() => {
+      emit('complete', 'win')
+    }, 500)
+  }
+}
+const handleKeyPress = (e) => {
+
+  if (!gameActive.value) return
+
+  if (
+    e.key === 'ArrowLeft' ||
+    e.key === 'a' ||
+    e.key === 'A'
+  ) {
+    playerX.value = Math.max(2, playerX.value - 4)
+  }
+
+  else if (
+    e.key === 'ArrowRight' ||
+    e.key === 'd' ||
+    e.key === 'D'
+  ) {
+    playerX.value = Math.min(94, playerX.value + 4)
+  }
+
+  else if (
+    e.key === 'ArrowUp' ||
+    e.key === 'w' ||
+    e.key === 'W'
+  ) {
+    playerY.value = Math.min(90, playerY.value + 4)
+  }
+
+  else if (
+    e.key === 'ArrowDown' ||
+    e.key === 's' ||
+    e.key === 'S'
+  ) {
+    playerY.value = Math.max(0, playerY.value - 4)
+  }
+}
+
+const updateTimer = () => {
+
+  if (!gameActive.value) return
+
+  if (timeLeft.value > 0) {
+
+    timeLeft.value -= 0.1
+
+    updateBombs()
+
+  } else {
+
+    triggerGameOver()
   }
 }
 
@@ -113,40 +256,21 @@ const emitResult = () => {
   emit('complete', escaped.value ? 'win' : 'lose')
 }
 
-const handleKeyPress = (e) => {
-  if (!gameActive.value) return
-
-  if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
-    playerX.value = Math.max(2, playerX.value - 4)
-  } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
-    playerX.value = Math.min(94, playerX.value + 4)
-  } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
-    playerY.value = Math.min(90, playerY.value + 4)
-  } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
-    playerY.value = Math.max(0, playerY.value - 4)
-  }
-}
-
-const updateTimer = () => {
-  if (timeLeft.value > 0) {
-    timeLeft.value -= 0.1
-    updateBombs()
-  } else {
-    gameActive.value = false
-    clearInterval(bombInterval)
-  }
-}
-
 onMounted(() => {
-  bombInterval = setInterval(spawnBomb, 350)
-  gameInterval = setInterval(updateTimer, 100)
-  window.addEventListener('keydown', handleKeyPress)
 
-  onBeforeUnmount(() => {
-    window.removeEventListener('keydown', handleKeyPress)
-    clearInterval(bombInterval)
-    clearInterval(gameInterval)
-  })
+  bombInterval = setInterval(spawnBomb, 650)
+
+  gameInterval = setInterval(updateTimer, 100)
+
+  window.addEventListener('keydown', handleKeyPress)
+})
+
+onBeforeUnmount(() => {
+
+  window.removeEventListener('keydown', handleKeyPress)
+
+  clearInterval(bombInterval)
+  clearInterval(gameInterval)
 })
 </script>
 
@@ -273,5 +397,12 @@ onMounted(() => {
 .continue-btn:hover {
   background: #000;
   color: #ff6600;
+}
+.lives {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 2rem;
+  z-index: 20;
 }
 </style>

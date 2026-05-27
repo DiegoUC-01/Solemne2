@@ -1,119 +1,203 @@
 <template>
   <div class="minigame-container">
-    <h2 class="minigame-title">⭕ EVITAR ASALTANTES</h2>
+    <h2 class="minigame-title">
+      🔪 ESCAPA DE LOS ASALTANTES
+    </h2>
 
     <div class="game-area">
-      <div class="player" :style="{ left: playerX + '%' }"></div>
 
+      <!-- VIDAS -->
+      <div class="lives">
+        <span v-for="n in lives" :key="n">❤️</span>
+      </div>
+
+      <!-- JUGADOR -->
       <div
-        v-for="item in items"
-        :key="item.id"
-        class="item"
+        class="player"
+        :style="{ left: playerX + '%' }"
+      ></div>
+
+      <!-- ENEMIGOS -->
+      <div
+        v-for="enemy in enemies"
+        :key="enemy.id"
+        class="enemy"
         :style="{
-          left: item.x + '%',
-          top: item.y + '%',
-          background: item.color,
+          left: enemy.x + '%',
+          top: enemy.y + '%'
         }"
       >
-        {{ item.emoji }}
+        🔪
       </div>
 
-      <div v-if="timeLeft <= 0 || collected >= targetCans" class="game-over">
-        <h3>{{ collected >= targetCans ? '¡VICTORIA!' : '¡DERROTA!' }}</h3>
-        <p>Latas recolectadas: {{ collected }}/{{ targetCans }}</p>
+      <!-- GAME OVER -->
+      <div
+        v-if="!gameActive && lives <= 0"
+        class="game-over"
+      >
+        <h3>GAME OVER</h3>
       </div>
 
+      <!-- STATS -->
       <div class="game-stats">
-        <span>Tiempo: {{ Math.ceil(timeLeft) }}s</span>
-        <span>Recogidas: {{ collected }}/{{ targetCans }}</span>
+        <span>
+          Tiempo: {{ Math.ceil(timeLeft) }}s
+        </span>
       </div>
+
     </div>
 
+    <!-- INSTRUCCIONES -->
     <div class="instructions">
-      Usa ← → o A/D para moverte. Recoge {{ targetCans }} latas en 30 segundos.
+      Usa ← → o A/D para moverte.<br>
+      Esquiva los cuchillos y sobrevive 20 segundos.
     </div>
 
+    <!-- BOTÓN -->
     <button
-      v-if="timeLeft <= 0 || collected >= targetCans"
+      v-if="!gameActive && lives > 0"
       class="continue-btn"
       @click="emitResult"
     >
       Continuar
     </button>
+
   </div>
 </template>
-
 <script setup>
+import { useGameStore } from '../../stores/gameStore'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+
+const gameStore = useGameStore()
 
 const emit = defineEmits(['complete'])
 
 const playerX = ref(50)
-const items = ref([])
-const collected = ref(0)
-const targetCans = 5
-const timeLeft = ref(30)
+const enemies = ref([])
+const lives = ref(3)
+const timeLeft = ref(20)
 const gameActive = ref(true)
+
+let enemyId = 0
+let enemyInterval = null
 let gameInterval = null
 
-const generateItems = () => {
-  items.value = Array.from({ length: 10 }, (_, i) => ({
-    id: i + 1,
-    x: Math.random() * 88 + 2,
-    y: Math.random() * 75 + 5,
-    color: ['#ff00ff', '#00ffff', '#ffff00', '#ff0088'][Math.floor(Math.random() * 4)],
-    emoji: '🥫',
-  }))
-}
+// SPAWN ENEMIGOS
+const spawnEnemy = () => {
 
-const checkWin = () => {
-  if (collected.value >= targetCans) {
-    gameActive.value = false
-    clearInterval(gameInterval)
-  }
-}
-
-const emitResult = () => {
-  emit('complete', collected.value >= targetCans ? 'win' : 'lose')
-}
-
-const handleKeyPress = (e) => {
   if (!gameActive.value) return
 
-  if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+  enemies.value.push({
+    id: ++enemyId,
+    x: Math.random() * 90,
+    y: -5,
+    speed: 1 + Math.random() * 1.5,
+  })
+}
+
+// ACTUALIZAR ENEMIGOS
+const updateEnemies = () => {
+
+  enemies.value = enemies.value.filter((enemy) => {
+
+    enemy.y += enemy.speed
+
+    // COLISIÓN
+    if (enemy.y > 82) {
+
+      const distance = Math.abs(playerX.value - enemy.x)
+
+      if (distance < 12) {
+
+        lives.value--
+
+        // MUERTE
+        if (lives.value <= 0) {
+
+          gameActive.value = false
+
+          clearInterval(enemyInterval)
+          clearInterval(gameInterval)
+
+          setTimeout(() => {
+
+            emit('complete', 'lose')
+
+            gameStore.health = 0
+            gameStore.gameOverReason = 'health'
+            gameStore.phase = 'gameover'
+
+          }, 200)
+        }
+
+        return false
+      }
+    }
+
+    return enemy.y < 100
+  })
+}
+
+// MOVIMIENTO
+const handleKeyPress = (e) => {
+
+  if (!gameActive.value) return
+
+  if (e.key === 'ArrowLeft' || e.key === 'a') {
     playerX.value = Math.max(2, playerX.value - 6)
-  } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+  }
+
+  if (e.key === 'ArrowRight' || e.key === 'd') {
     playerX.value = Math.min(94, playerX.value + 6)
   }
-
-  const playerCenter = playerX.value
-  items.value = items.value.filter((item) => {
-    const distance = Math.abs(playerCenter - item.x)
-    if (distance < 7) {
-      collected.value++
-      checkWin()
-      return false
-    }
-    return true
-  })
 }
 
+// TIMER
 const updateTimer = () => {
+
+  if (!gameActive.value) return
+
   if (timeLeft.value > 0) {
+
     timeLeft.value -= 0.1
+
+    updateEnemies()
+
   } else {
+
     gameActive.value = false
+
+    clearInterval(enemyInterval)
+    clearInterval(gameInterval)
+
+    setTimeout(() => {
+      emit('complete', 'win')
+    }, 500)
   }
 }
 
+// CONTINUAR
+const emitResult = () => {
+  emit('complete', 'win')
+}
+
+// MOUNT
 onMounted(() => {
-  generateItems()
+
   window.addEventListener('keydown', handleKeyPress)
+
+  enemyInterval = setInterval(spawnEnemy, 700)
+
   gameInterval = setInterval(updateTimer, 100)
-  onBeforeUnmount(() => {
-    window.removeEventListener('keydown', handleKeyPress)
-    clearInterval(gameInterval)
-  })
+})
+
+// UNMOUNT
+onBeforeUnmount(() => {
+
+  window.removeEventListener('keydown', handleKeyPress)
+
+  clearInterval(enemyInterval)
+  clearInterval(gameInterval)
 })
 </script>
 
@@ -234,5 +318,17 @@ onMounted(() => {
 .continue-btn:hover {
   background: #000;
   color: #00ff66;
+}
+.enemy {
+  position: absolute;
+  font-size: 1.8rem;
+  z-index: 5;
+}
+.lives {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 2rem;
+  z-index: 20;
 }
 </style>

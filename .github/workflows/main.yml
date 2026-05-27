@@ -10,8 +10,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     defaults:
-  run:
-    working-directory: ./Game
+      run:
+        working-directory: ./Game
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4

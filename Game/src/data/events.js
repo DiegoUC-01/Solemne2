@@ -3,6 +3,7 @@ export const fixedEvents = {
     day: 0,
     title: 'ALERTA NACIONAL',
     location: 'casa',
+    image: 'noticiadia0',
     segments: [
       {
         text: 'La pantalla de la televisión parpadea con interferencia. De repente, una transmisión de emergencia interrumpe toda programación...',
@@ -27,6 +28,7 @@ export const fixedEvents = {
     day: 1,
     title: 'DECISIÓN MORAL',
     location: 'casa',
+    image: 'casadia1',
     segments: [
       {
         text: 'Es tu primer día completo en el refugio. El silencio es interrumpido por golpes desesperados en la puerta.',
@@ -59,6 +61,7 @@ export const fixedEvents = {
       day: 2,
       title: 'RACIONAMIENTO',
       location: 'casa',
+      image: 'casadia1',
       requiresFlag: 'refugees',
       segments: [
         {
@@ -87,6 +90,7 @@ export const fixedEvents = {
       day: 2,
       title: 'EL SILENCIO',
       location: 'casa',
+      image: 'casadia1',
       requiresNoFlag: 'refugees',
       segments: [
         {
@@ -107,6 +111,7 @@ export const fixedEvents = {
       day: 3,
       title: 'SILENCIO INCÓMODO',
       location: 'supermercado',
+      image: 'superme',
       requiresFlag: 'd2_lie',
       segments: [
         {
@@ -135,6 +140,7 @@ export const fixedEvents = {
       day: 3,
       title: 'RECURSOS A CERO',
       location: 'supermercado',
+      image: 'superme',
       requiresFlag: 'd2_share',
       segments: [
         {
@@ -163,6 +169,7 @@ export const fixedEvents = {
       day: 3,
       title: 'DECISIÓN SUPERMERCADO',
       location: 'supermercado',
+      image: 'superme',
       requiresNoFlag: 'refugees',
       segments: [
         {
@@ -196,6 +203,7 @@ export const fixedEvents = {
       day: 4,
       title: 'VUELTA AL HOGAR',
       location: 'casa',
+      image: 'casa_con_tablones',
       requiresFlags: ['d3_super', 'refugees'],
       segments: [
         {
@@ -210,6 +218,7 @@ export const fixedEvents = {
       day: 4,
       title: 'VUELTA AL HOGAR',
       location: 'casa',
+      image: 'casa_con_tablones',
       requiresFlags: ['d3_super', 'd1_solo'],
       segments: [
         {
@@ -224,6 +233,7 @@ export const fixedEvents = {
       day: 4,
       title: 'VUELTA AL HOGAR',
       location: 'casa',
+      image: 'casa_con_tablones',
       requiresFlags: ['d3_super_allies'],
       segments: [
         {
@@ -238,6 +248,7 @@ export const fixedEvents = {
       day: 4,
       title: 'DISCUSIÓN POR HAMBRE',
       location: 'casa',
+      image: 'casa_con_tablones',
       requiresFlag: 'd3_stay',
       segments: [
         {
@@ -276,6 +287,7 @@ export const fixedEvents = {
       day: 6,
       title: 'LA RADIO',
       location: 'casa',
+      image: 'plaza',
       requiresFlags: ['refugees', 'd2_share'],
       segments: [
         {
@@ -301,6 +313,7 @@ export const fixedEvents = {
       day: 6,
       title: 'CONFRONTACIÓN',
       location: 'casa',
+      image: 'plaza',
       requiresFlags: ['refugees', 'd2_lie'],
       segments: [
         {
@@ -329,6 +342,7 @@ export const fixedEvents = {
       day: 6,
       title: 'TE ROBAN Y SE VAN',
       location: 'casa',
+      image: 'plaza',
       requiresFlag: 'd4_ignore',
       segments: [
         {
@@ -351,6 +365,7 @@ export const fixedEvents = {
       day: 6,
       title: 'LA RADIO',
       location: 'casa',
+      image: 'plaza',
       requiresFlags: ['d1_solo'],
       segments: [
         {
@@ -372,6 +387,7 @@ export const fixedEvents = {
       day: 6,
       title: 'DESPUÉS DE LA TORMENTA',
       location: 'casa',
+      image: 'plaza',
       requiresFlag: 'd4_kick',
       segments: [
         {
@@ -399,6 +415,7 @@ export const fixedEvents = {
     day: 7,
     title: 'BOMBARDEO NOCTURNO',
     location: 'casa',
+    image: 'casa_con_tablones',
     segments: [
       {
         text: 'Una noche, el cielo se ilumina de naranja. Explosiones sacuden la ciudad. Los cristales de las ventanas vibran.',
@@ -431,6 +448,7 @@ export const fixedEvents = {
       day: 8,
       title: 'FIEBRE POR RADIACIÓN',
       location: 'casa',
+      image: 'plaza',
       requiresFlag: 'refugees',
       segments: [
         {
@@ -455,6 +473,7 @@ export const fixedEvents = {
       day: 8,
       title: 'FIEBRE POR RADIACIÓN',
       location: 'casa',
+      image: 'plaza',
       requiresNoFlag: 'refugees',
       segments: [
         {
@@ -481,6 +500,7 @@ export const fixedEvents = {
     day: 9,
     title: 'VIAJE A LA FARMACIA',
     location: 'farmacia',
+    image: 'FARMACIA1',
     segments: [
       {
         text: 'Necesitás medicina urgente. La fiebre bajó pero la tos persiste. A tres cuadras hay una farmacia.',
@@ -522,6 +542,7 @@ export const fixedEvents = {
     day: 11,
     title: 'RADIO: RESCATE EN 4 DÍAS',
     location: 'casa',
+    image: 'plaza',
     segments: [
       {
         text: 'La radio crepita con fuerza. Una voz clara: "Equipo de rescate en camino. Helicóptero llegará en 4 días. Repito: 4 días."',
@@ -554,6 +575,7 @@ export const fixedEvents = {
       day: 12,
       title: 'BANDIDOS',
       location: 'casa',
+      image: 'plaza',
       requiresFlag: 'refugees',
       segments: [
         {
@@ -582,6 +604,7 @@ export const fixedEvents = {
       day: 12,
       title: 'BANDIDOS',
       location: 'casa',
+      image: 'plaza',
       requiresNoFlag: 'refugees',
       segments: [
         {
@@ -615,6 +638,7 @@ export const fixedEvents = {
       day: 13,
       title: 'ÚLTIMAS RESERVAS',
       location: 'casa',
+      image: 'plaza',
       requiresFlags: ['refugees', 'd12_fought'],
       segments: [
         {
@@ -637,6 +661,7 @@ export const fixedEvents = {
       day: 13,
       title: 'ÚLTIMAS RESERVAS',
       location: 'casa',
+      image: 'plaza',
       requiresFlags: ['refugees', 'd12_negotiated'],
       segments: [
         {
@@ -665,6 +690,7 @@ export const fixedEvents = {
       day: 13,
       title: 'ÚLTIMAS RESERVAS',
       location: 'casa',
+      image: 'plaza',
       requiresFlags: ['d12_negotiated_solo'],
       segments: [
         {
@@ -699,6 +725,7 @@ export const fixedEvents = {
       day: 14,
       title: 'LLUVIA NEGRA',
       location: 'casa',
+      image: 'antes_final',
       requiresFlag: 'd13_rest',
       segments: [
         {
@@ -716,6 +743,7 @@ export const fixedEvents = {
       day: 14,
       title: 'LLUVIA NEGRA',
       location: 'casa',
+      image: 'antes_final',
       requiresFlags: ['refugees', 'd12_negotiated'],
       segments: [
         {
@@ -733,6 +761,7 @@ export const fixedEvents = {
       day: 14,
       title: 'LLUVIA NEGRA',
       location: 'casa',
+      image: 'antes_final',
       requiresFlags: ['d12_negotiated_solo'],
       segments: [
         {
@@ -816,6 +845,7 @@ export const minigameEvents = {
     type: 'catchRain',
     title: 'RECOGER AGUA DE LLUVIA',
     location: 'casa',
+    image: 'casadia1',
     win: { water: 3, morale: 5, message: 'Recolectaste suficiente agua de lluvia.' },
     lose: { water: -1, morale: -5, message: 'No juntaste suficiente agua.' },
   },
@@ -824,6 +854,7 @@ export const minigameEvents = {
     type: 'findCans',
     title: 'EVITAR ASALTANTES',
     location: 'supermercado',
+    image: 'superme',
     win: { food: 4, morale: 8, message: 'Esquivaste a los asaltantes y conseguiste provisiones.' },
     lose: { food: -2, morale: -5, message: 'Los asaltantes te atraparon. Perdiste provisiones.' },
   },
@@ -832,6 +863,7 @@ export const minigameEvents = {
     type: 'escape',
     title: 'ESCAPE FINAL',
     location: 'calle',
+    image: 'helicóptero_irse',
     win: { health: 5, morale: 15, message: 'Esquivaste las bombas y llegaste al helicóptero. ¡RESCATADO!' },
     lose: { health: -20, morale: -10, message: 'Una bomba te golpeó de lleno.' },
   },

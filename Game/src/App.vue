@@ -105,7 +105,7 @@
 
           <div v-else-if="game.phase === 'intro'" class="gameplay-layout intro-layout">
             <div class="scene-area">
-              <SceneArt location="casa">
+              <SceneArt location="casa" image="noticiadia0">
                 <div class="scene-label">🏠 TU DEPARTAMENTO</div>
               </SceneArt>
             </div>
@@ -135,7 +135,7 @@
 
           <div v-else-if="game.phase === 'story'" class="gameplay-layout story-layout">
             <div class="scene-area">
-              <SceneArt :location="game.currentEvent?.location || 'casa'">
+              <SceneArt :location="game.currentEvent?.location || 'casa'" :image="game.currentEvent?.image">
                 <div class="scene-label">{{ locationEmoji }} {{ game.currentEvent?.location?.toUpperCase() }}</div>
               </SceneArt>
             </div>
@@ -156,7 +156,7 @@
 
           <div v-else-if="game.phase === 'decision'" class="gameplay-layout decision-layout">
             <div class="scene-area">
-              <SceneArt :location="game.currentEvent?.location || 'casa'">
+              <SceneArt :location="game.currentEvent?.location || 'casa'" :image="game.currentEvent?.image">
                 <div class="scene-label">{{ locationEmoji }} {{ game.currentEvent?.location?.toUpperCase() }}</div>
               </SceneArt>
             </div>
@@ -174,7 +174,7 @@
 
           <div v-else-if="game.phase === 'result'" class="gameplay-layout result-layout">
             <div class="scene-area">
-              <SceneArt :location="game.currentEvent?.location || 'casa'" />
+              <SceneArt :location="game.currentEvent?.location || 'casa'" :image="game.currentEvent?.image" />
             </div>
             <div class="text-area">
               <div class="result-content">

@@ -9,20 +9,31 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     defaults:
       run:
         working-directory: ./Game
+
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-        with:
-          version: latest
+
+      # PRIMERO NODE
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
+          cache-dependency-path: Game/pnpm-lock.yaml
+
+      # DESPUÉS PNPM
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
       - run: pnpm install --frozen-lockfile
+
       - run: pnpm run lint
+
       - run: pnpm run test
+
       - name: Simular push a DockerHub
         run: echo "docker push usuario/refugio-nuclear:latest"

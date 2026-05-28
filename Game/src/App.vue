@@ -9,9 +9,7 @@
           <span class="day-counter" v-if="game.phase !== 'menu' && game.phase !== 'rules' && game.phase !== 'settings'">
             DIA {{ game.day }}/15
           </span>
-          <button class="header-btn" v-if="game.phase !== 'menu' && game.phase !== 'rules' && game.phase !== 'settings'" @click="game.toggleInventory" :class="{ active: game.showInventory }">
-            MOCHILA{{ game.totalInventoryItems > 0 ? ` (${game.totalInventoryItems})` : '' }}
-          </button>
+          
           <button class="header-btn" @click="goToMenu">
             INICIO
           </button>
@@ -66,10 +64,6 @@
                 <div class="rule-item">
                   <h3>🤝 Las decisiones importan</h3>
                   <p>Cada decision afecta tus recursos. Algunas tienen riesgo de exito/fracaso.</p>
-                </div>
-                <div class="rule-item">
-                  <h3>🎒 Usa tu inventario</h3>
-                  <p>Algunas decisiones te dan objetos. Usalos desde la mochila cuando los necesites.</p>
                 </div>
                 <div class="rule-item">
                   <h3>📖 Consulta tu diario</h3>
@@ -230,7 +224,6 @@
                 <p>Agua restante: {{ game.water }}</p>
                 <p>Salud final: {{ game.health }}</p>
                 <p>Moral final: {{ game.morale }}</p>
-                <p>Objetos en inventario: {{ game.totalInventoryItems }}</p>
               </div>
               <div class="victory-buttons">
                 <button class="restart-btn" @click="handleRestart">
@@ -242,29 +235,7 @@
           </div>
         </main>
 
-        <aside v-if="game.showInventory && game.phase !== 'menu' && game.phase !== 'rules' && game.phase !== 'settings'" class="side-panel">
-          <div class="panel-header">
-            <h3>MOCHILA</h3>
-            <button class="panel-close" @click="game.showInventory = false">×</button>
-          </div>
-          <div class="panel-body">
-            <div v-if="game.totalInventoryItems === 0" class="empty-msg">
-              <p>Mochila vacia</p>
-            </div>
-            <div v-else class="inventory-list">
-              <div class="inv-item" v-for="(qty, key) in game.inventory" :key="key" v-show="qty > 0">
-                <div class="inv-item-info">
-                  <span class="inv-icon">{{ itemIcons[key] || '📦' }}</span>
-                  <span class="inv-name">{{ itemNames[key] || key }}</span>
-                  <span class="inv-qty">x{{ qty }}</span>
-                </div>
-                <button class="inv-use-btn" @click="game.useItem(key)" v-if="['medicine', 'bandages', 'batteries'].includes(key)">
-                  USAR
-                </button>
-              </div>
-            </div>
-          </div>
-        </aside>
+        
 
         <aside v-if="showJournal && game.phase !== 'menu' && game.phase !== 'rules' && game.phase !== 'settings'" class="side-panel journal-panel">
           <div class="panel-header">
@@ -307,9 +278,7 @@
                     {{ entry.effects.morale > 0 ? '+' : '' }}{{ entry.effects.morale }} moral
                   </span>
                 </div>
-                <div v-if="entry.itemReceived" class="entry-item">
-                  📦 +{{ entry.itemQuantity }} {{ itemNames[entry.itemReceived] || entry.itemReceived }}
-                </div>
+                
               </div>
             </div>
           </div>
@@ -326,9 +295,6 @@
         <div class="footer-actions">
           <button class="footer-btn" @click="showJournal = !showJournal" :class="{ active: showJournal }">
             📖 DIARIO
-          </button>
-          <button class="footer-btn" @click="game.toggleInventory" :class="{ active: game.showInventory }">
-            🎒 MOCHILA
           </button>
         </div>
       </footer>
@@ -354,19 +320,7 @@ const audio = useAudio()
 const showJournal = ref(false)
 const textSpeed = ref('normal')
 
-const itemIcons = {
-  medicine: '💊',
-  bandages: '🩹',
-  batteries: '🔋',
-  radio: '📻',
-}
 
-const itemNames = {
-  medicine: 'Medicina',
-  bandages: 'Vendas',
-  batteries: 'Pilas',
-  radio: 'Radio',
-}
 
 const speedValue = computed(() => {
   switch (textSpeed.value) {
@@ -401,7 +355,6 @@ function goToMenu() {
   audio.playClick()
   game.phase = 'menu'
   showJournal.value = false
-  game.showInventory = false
 }
 
 function onStoryComplete() {
@@ -452,7 +405,6 @@ function handleMinigameComplete(result) {
 function handleRestart() {
   audio.playClick()
   showJournal.value = false
-  game.showInventory = false
   game.reset()
   game.startGame()
 }
@@ -889,56 +841,7 @@ watch(() => game.phase, (newPhase) => {
   padding: 30px 0;
 }
 
-.inventory-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
 
-.inv-item {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid #333;
-  padding: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.inv-item-info {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.inv-icon {
-  font-size: 18px;
-}
-
-.inv-name {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 8px;
-  color: #e0e0e0;
-}
-
-.inv-qty {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 8px;
-  color: #fbbf24;
-}
-
-.inv-use-btn {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 7px;
-  padding: 3px 8px;
-  background: #4ade80;
-  color: #0a0a0a;
-  border: none;
-  cursor: pointer;
-}
-
-.inv-use-btn:hover {
-  background: #22c55e;
-}
 
 .journal-list {
   display: flex;
@@ -1013,12 +916,7 @@ watch(() => game.phase, (newPhase) => {
 .entry-effects .gain { color: #4ade80; }
 .entry-effects .loss { color: #ef4444; }
 
-.entry-item {
-  font-family: 'Press Start 2P', monospace;
-  font-size: 7px;
-  color: #fbbf24;
-  margin-top: 3px;
-}
+
 
 @keyframes pulse {
   0%, 100% { opacity: 1; }

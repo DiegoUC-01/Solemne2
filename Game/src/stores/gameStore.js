@@ -22,13 +22,6 @@ export const useGameStore = defineStore('game', {
     usedRandomEvents: [],
     gameOverReason: null,
     journal: [],
-    inventory: {
-      medicine: 0,
-      bandages: 0,
-      batteries: 0,
-      radio: 0,
-    },
-    showInventory: false,
   }),
 
   getters: {
@@ -44,9 +37,7 @@ export const useGameStore = defineStore('game', {
     survivalDays() {
       return this.day
     },
-    totalInventoryItems() {
-      return Object.values(this.inventory).reduce((a, b) => a + b, 0)
-    },
+    
   },
 
   actions: {
@@ -64,8 +55,6 @@ export const useGameStore = defineStore('game', {
       this.usedRandomEvents = []
       this.gameOverReason = null
       this.journal = []
-      this.inventory = { medicine: 0, bandages: 0, batteries: 0, radio: 0 }
-      this.showInventory = false
     },
 
     addToJournal(entry) {
@@ -76,55 +65,7 @@ export const useGameStore = defineStore('game', {
       })
     },
 
-    addToInventory(item, quantity = 1) {
-      if (this.inventory[item] !== undefined) {
-        this.inventory[item] += quantity
-      }
-    },
-
-    removeFromInventory(item, quantity = 1) {
-      if (this.inventory[item] !== undefined) {
-        this.inventory[item] = Math.max(0, this.inventory[item] - quantity)
-      }
-    },
-
-    useItem(item) {
-      if (this.inventory[item] > 0) {
-        this.removeFromInventory(item, 1)
-
-        switch (item) {
-          case 'medicine':
-            this.health = clamp(this.health + 15, 0, this.maxHealth)
-            this.addToJournal({
-              type: 'uso',
-              title: 'Usaste medicina',
-              description: 'Tomaste medicina. +15 salud',
-              effects: { health: 15 },
-            })
-            break
-          case 'bandages':
-            this.health = clamp(this.health + 8, 0, this.maxHealth)
-            this.addToJournal({
-              type: 'uso',
-              title: 'Usaste vendas',
-              description: 'Te vendaste las heridas. +8 salud',
-              effects: { health: 8 },
-            })
-            break
-          case 'batteries':
-            this.morale = clamp(this.morale + 5, 0, this.maxMorale)
-            this.addToJournal({
-              type: 'uso',
-              title: 'Usaste pilas',
-              description: 'Encendiste la radio un rato. +5 moral',
-              effects: { morale: 5 },
-            })
-            break
-        }
-        return true
-      }
-      return false
-    },
+    
 
     advanceSegment() {
       if (!this.currentEvent) return
@@ -171,9 +112,6 @@ export const useGameStore = defineStore('game', {
         if (decision.setsFlag) {
           this.flags[decision.setsFlag] = true
         }
-        if (decision.givesItem) {
-          this.addToInventory(decision.givesItem, decision.giveQuantity || 1)
-        }
         resultText = decision.result
       }
 
@@ -186,11 +124,6 @@ export const useGameStore = defineStore('game', {
         effects: decision.random
           ? (wasSuccess ? decision.effects.success : decision.effects.failure)
           : decision.effects,
-      }
-
-      if (decision.givesItem) {
-        journalEntry.itemReceived = decision.givesItem
-        journalEntry.itemQuantity = decision.giveQuantity || 1
       }
 
       this.addToJournal(journalEntry)
@@ -360,9 +293,7 @@ export const useGameStore = defineStore('game', {
       this.advanceDay()
     },
 
-    toggleInventory() {
-      this.showInventory = !this.showInventory
-    },
+    
 
     reset() {
       this.$reset()

@@ -287,7 +287,7 @@ export const fixedEvents = {
       day: 6,
       title: 'LA RADIO',
       location: 'casa',
-      image: 'plaza',
+      image: 'casa_con_tablones',
       requiresFlags: ['refugees', 'd2_share'],
       segments: [
         {
@@ -313,7 +313,7 @@ export const fixedEvents = {
       day: 6,
       title: 'CONFRONTACIÓN',
       location: 'casa',
-      image: 'plaza',
+      image: 'casa_con_tablones',
       requiresFlags: ['refugees', 'd2_lie'],
       segments: [
         {
@@ -342,7 +342,7 @@ export const fixedEvents = {
       day: 6,
       title: 'TE ROBAN Y SE VAN',
       location: 'casa',
-      image: 'plaza',
+      image: 'casa_con_tablones',
       requiresFlag: 'd4_ignore',
       segments: [
         {
@@ -365,7 +365,7 @@ export const fixedEvents = {
       day: 6,
       title: 'LA RADIO',
       location: 'casa',
-      image: 'plaza',
+      image: 'casa_con_tablones',
       requiresFlags: ['d1_solo'],
       segments: [
         {
@@ -387,7 +387,7 @@ export const fixedEvents = {
       day: 6,
       title: 'DESPUÉS DE LA TORMENTA',
       location: 'casa',
-      image: 'plaza',
+      image: 'casa_con_tablones',
       requiresFlag: 'd4_kick',
       segments: [
         {
@@ -448,7 +448,7 @@ export const fixedEvents = {
       day: 8,
       title: 'FIEBRE POR RADIACIÓN',
       location: 'casa',
-      image: 'plaza',
+      image: 'casa_con_tablones',
       requiresFlag: 'refugees',
       segments: [
         {
@@ -473,7 +473,7 @@ export const fixedEvents = {
       day: 8,
       title: 'FIEBRE POR RADIACIÓN',
       location: 'casa',
-      image: 'plaza',
+      image: 'casa_con_tablones',
       requiresNoFlag: 'refugees',
       segments: [
         {
@@ -542,7 +542,7 @@ export const fixedEvents = {
     day: 11,
     title: 'RADIO: RESCATE EN 4 DÍAS',
     location: 'casa',
-    image: 'plaza',
+    image: 'casa_con_tablones',
     segments: [
       {
         text: 'La radio crepita con fuerza. Una voz clara: "Equipo de rescate en camino. Helicóptero llegará en 4 días. Repito: 4 días."',
@@ -575,7 +575,7 @@ export const fixedEvents = {
       day: 12,
       title: 'BANDIDOS',
       location: 'casa',
-      image: 'plaza',
+      image: 'casa_con_tablones',
       requiresFlag: 'refugees',
       segments: [
         {
@@ -604,7 +604,7 @@ export const fixedEvents = {
       day: 12,
       title: 'BANDIDOS',
       location: 'casa',
-      image: 'plaza',
+      image: 'casa_con_tablones',
       requiresNoFlag: 'refugees',
       segments: [
         {
@@ -638,7 +638,7 @@ export const fixedEvents = {
       day: 13,
       title: 'ÚLTIMAS RESERVAS',
       location: 'casa',
-      image: 'plaza',
+      image: 'casa_con_tablones',
       requiresFlags: ['refugees', 'd12_fought'],
       segments: [
         {
@@ -661,7 +661,7 @@ export const fixedEvents = {
       day: 13,
       title: 'ÚLTIMAS RESERVAS',
       location: 'casa',
-      image: 'plaza',
+      image: 'casa_con_tablones',
       requiresFlags: ['refugees', 'd12_negotiated'],
       segments: [
         {
@@ -690,7 +690,7 @@ export const fixedEvents = {
       day: 13,
       title: 'ÚLTIMAS RESERVAS',
       location: 'casa',
-      image: 'plaza',
+      image: 'casa_con_tablones',
       requiresFlags: ['d12_negotiated_solo'],
       segments: [
         {

@@ -16,8 +16,8 @@ describe('Game Store — nueva versión', () => {
 
     it('tiene recursos iniciales correctos', () => {
       const store = useGameStore()
-      expect(store.food).toBe(8)
-      expect(store.water).toBe(6)
+      expect(store.food).toBe(10)
+      expect(store.water).toBe(8)
       expect(store.health).toBe(100)
       expect(store.morale).toBe(100)
     })
@@ -47,7 +47,7 @@ describe('Game Store — nueva versión', () => {
 
       store.startGame()
 
-      expect(store.food).toBe(8)
+      expect(store.food).toBe(10)
       expect(store.health).toBe(100)
       expect(store.gameOverReason).toBeNull()
       expect(store.journal).toHaveLength(0)
@@ -130,15 +130,19 @@ describe('Game Store — nueva versión', () => {
   
 
   describe('applyDailyConsumption()', () => {
-    it('consume 1 de comida y agua sin refugiados', () => {
+    it('consume 1 de comida y agua, y desgaste pasivo de -4 salud y -3 moral', () => {
       const store = useGameStore()
       store.food = 6
       store.water = 4
+      store.health = 100
+      store.morale = 100
 
       store.applyDailyConsumption()
 
       expect(store.food).toBe(5)
       expect(store.water).toBe(3)
+      expect(store.health).toBe(96)
+      expect(store.morale).toBe(97)
     })
 
     it('consume 1 de comida y agua también con refugiados', () => {
@@ -146,22 +150,54 @@ describe('Game Store — nueva versión', () => {
       store.flags.refugees = true
       store.food = 6
       store.water = 4
+      store.health = 100
+      store.morale = 100
 
       store.applyDailyConsumption()
 
       expect(store.food).toBe(5)
       expect(store.water).toBe(3)
+      expect(store.health).toBe(96)
+      expect(store.morale).toBe(97)
     })
 
-    it('si comida llega a 0, la salud baja', () => {
+    it('si comida llega a 0, la salud baja por desgaste + sin comida', () => {
       const store = useGameStore()
       store.food = 1
       store.health = 100
+      store.morale = 100
 
       store.applyDailyConsumption()
 
       expect(store.food).toBe(0)
-      expect(store.health).toBeLessThan(100)
+      expect(store.health).toBe(92)
+      expect(store.morale).toBe(97)
+    })
+
+    it('si agua llega a 0, la salud baja por desgaste + sin agua', () => {
+      const store = useGameStore()
+      store.water = 1
+      store.health = 100
+      store.morale = 100
+
+      store.applyDailyConsumption()
+
+      expect(store.water).toBe(0)
+      expect(store.health).toBe(90)
+      expect(store.morale).toBe(97)
+    })
+
+    it('sin comida Y sin agua, moral baja extra', () => {
+      const store = useGameStore()
+      store.food = 0
+      store.water = 0
+      store.health = 100
+      store.morale = 100
+
+      store.applyDailyConsumption()
+
+      expect(store.health).toBe(86)
+      expect(store.morale).toBe(95)
     })
   })
 

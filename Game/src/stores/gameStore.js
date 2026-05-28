@@ -9,8 +9,8 @@ export const useGameStore = defineStore('game', {
   state: () => ({
     day: 0,
     phase: 'menu',
-    food: 8,
-    water: 6,
+    food: 10,
+    water: 8,
     health: 100,
     morale: 100,
     currentEvent: null,
@@ -44,8 +44,8 @@ export const useGameStore = defineStore('game', {
     startGame() {
       this.day = 0
       this.phase = 'intro'
-      this.food = 8
-      this.water = 6
+      this.food = 10
+      this.water = 8
       this.health = 100
       this.morale = 100
       this.currentEvent = fixedEvents[0]
@@ -212,11 +212,17 @@ export const useGameStore = defineStore('game', {
       this.food = clamp(this.food - foodCost, 0, this.maxStat)
       this.water = clamp(this.water - waterCost, 0, this.maxStat)
 
+      this.health = clamp(this.health - 4, 0, this.maxHealth)
+      this.morale = clamp(this.morale - 3, 0, this.maxMorale)
+
       if (this.food <= 0) {
-        this.health = clamp(this.health - 6, 0, this.maxHealth)
+        this.health = clamp(this.health - 4, 0, this.maxHealth)
       }
       if (this.water <= 0) {
-        this.health = clamp(this.health - 8, 0, this.maxHealth)
+        this.health = clamp(this.health - 6, 0, this.maxHealth)
+      }
+      if (this.food <= 0 && this.water <= 0) {
+        this.morale = clamp(this.morale - 2, 0, this.maxMorale)
       }
     },
 

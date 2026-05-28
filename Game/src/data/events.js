@@ -790,8 +790,6 @@ export const randomEvents = [
     ],
     effects: { food: 2, water: 1, health: 2, morale: 3 },
     location: 'calle',
-    givesItem: 'bandages',
-    giveQuantity: 1,
   },
   {
     title: 'Extraño amable',
@@ -808,8 +806,6 @@ export const randomEvents = [
     ],
     effects: { food: 0, water: 0, health: 18, morale: 5 },
     location: 'calle',
-    givesItem: 'medicine',
-    giveQuantity: 1,
   },
   {
     title: 'Lluvia',
@@ -834,8 +830,6 @@ export const randomEvents = [
     ],
     effects: { food: 0, water: 0, health: 3, morale: 12 },
     location: 'casa',
-    givesItem: 'radio',
-    giveQuantity: 1,
   },
 ]
 

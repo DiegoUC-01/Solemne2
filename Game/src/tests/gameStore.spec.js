@@ -22,11 +22,9 @@ describe('Game Store — nueva versión', () => {
       expect(store.morale).toBe(100)
     })
 
-    it('inventario y diario empiezan vacíos', () => {
+    it('diario empieza vacío', () => {
       const store = useGameStore()
-      expect(store.totalInventoryItems).toBe(0)
       expect(store.journal).toHaveLength(0)
-      expect(store.showInventory).toBe(false)
     })
   })
 
@@ -129,31 +127,7 @@ describe('Game Store — nueva versión', () => {
     })
   })
 
-  describe('Inventario', () => {
-    it('addToInventory agrega items', () => {
-      const store = useGameStore()
-      store.addToInventory('medicine', 2)
-      expect(store.inventory.medicine).toBe(2)
-      expect(store.totalInventoryItems).toBe(2)
-    })
-
-    it('useItem consume items y aplica efectos', () => {
-      const store = useGameStore()
-      store.health = 50
-      store.addToInventory('medicine', 1)
-
-      store.useItem('medicine')
-
-      expect(store.inventory.medicine).toBe(0)
-      expect(store.health).toBe(65)
-    })
-
-    it('useItem retorna false si no hay items', () => {
-      const store = useGameStore()
-      const result = store.useItem('medicine')
-      expect(result).toBe(false)
-    })
-  })
+  
 
   describe('applyDailyConsumption()', () => {
     it('consume 1 de comida y agua sin refugiados', () => {

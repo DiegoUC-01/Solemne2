@@ -1,21 +1,10 @@
 <template>
   <div class="minigame-container">
-
     <h2 class="minigame-title">
-      🚁 ESCAPE FINAL
+      🔪 ESCAPA DE LOS ASALTANTES
     </h2>
 
     <div class="game-area">
-
-      <!-- HELICÓPTERO -->
-      <div class="helicopter">
-        🚁
-      </div>
-
-      <!-- ZONA DE ESCAPE -->
-      <div class="escape-zone">
-        ESCAPE
-      </div>
 
       <!-- VIDAS -->
       <div class="lives">
@@ -25,57 +14,48 @@
       <!-- JUGADOR -->
       <div
         class="player"
-        :style="{
-          left: playerX + '%',
-          bottom: playerY + '%'
-        }"
+        :style="{ left: playerX + '%' }"
       ></div>
 
-      <!-- BOMBAS -->
+      <!-- ENEMIGOS -->
       <div
-        v-for="bomb in bombs"
-        :key="bomb.id"
-        class="bomb"
+        v-for="enemy in enemies"
+        :key="enemy.id"
+        class="enemy"
         :style="{
-          left: bomb.x + '%',
-          top: bomb.y + '%'
+          left: enemy.x + '%',
+          top: enemy.y + '%'
         }"
       >
-        💣
+        🔪
       </div>
 
-      <!-- VICTORIA -->
+      <!-- GAME OVER -->
       <div
-        v-if="escaped"
+        v-if="!gameActive && lives <= 0"
         class="game-over"
       >
-        <h3>¡RESCATADO!</h3>
-
-        <p>
-          Alcanzaste el helicóptero
-        </p>
+        <h3>GAME OVER</h3>
       </div>
 
       <!-- STATS -->
       <div class="game-stats">
-
         <span>
           Tiempo: {{ Math.ceil(timeLeft) }}s
         </span>
-
       </div>
 
     </div>
 
     <!-- INSTRUCCIONES -->
     <div class="instructions">
-      Usa ← → ↑ ↓ o WASD.<br>
-      Esquiva bombas y llega al helicóptero.
+      Usa ← → o A/D para moverte.<br>
+      Esquiva los cuchillos y sobrevive 20 segundos.
     </div>
 
-    <!-- BOTÓN SOLO SI GANA -->
+    <!-- BOTÓN -->
     <button
-      v-if="escaped"
+      v-if="!gameActive && lives > 0"
       class="continue-btn"
       @click="emitResult"
     >
@@ -84,158 +64,95 @@
 
   </div>
 </template>
-
 <script setup>
 import { useGameStore } from '../../stores/gameStore'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-const emit = defineEmits(['complete'])
-
 const gameStore = useGameStore()
 
+const emit = defineEmits(['complete'])
+
 const playerX = ref(50)
-const playerY = ref(5)
-
-const bombs = ref([])
-
-const escaped = ref(false)
-
+const enemies = ref([])
 const lives = ref(3)
-
 const timeLeft = ref(20)
-
 const gameActive = ref(true)
 
-let bombId = 0
-let bombInterval = null
+let enemyId = 0
+let enemyInterval = null
 let gameInterval = null
 
-const spawnBomb = () => {
+// SPAWN ENEMIGOS
+const spawnEnemy = () => {
 
-  if (!gameActive.value || timeLeft.value <= 0) return
+  if (!gameActive.value) return
 
-  bombs.value.push({
-    x: Math.random() * 88 + 2,
-    y: 15,
-
-    // MÁS LENTO
-    speed: 0.7 + Math.random() * 1.1,
-
-    id: ++bombId,
+  enemies.value.push({
+    id: ++enemyId,
+    x: Math.random() * 90,
+    y: -5,
+    speed: 1 + Math.random() * 1.5,
   })
 }
 
-const triggerGameOver = () => {
+// ACTUALIZAR ENEMIGOS
+const updateEnemies = () => {
 
-  gameActive.value = false
+  enemies.value = enemies.value.filter((enemy) => {
 
-  clearInterval(bombInterval)
-  clearInterval(gameInterval)
+    enemy.y += enemy.speed
 
-  setTimeout(() => {
+    // COLISIÓN
+    if (enemy.y > 86 && enemy.y < 96) {
 
-    gameStore.health = 0
-    gameStore.gameOverReason = 'bombs'
-    gameStore.phase = 'gameover'
+      const distance = Math.abs(playerX.value - enemy.x)
 
-  }, 200)
-}
+      if (distance < 5) {
 
-const updateBombs = () => {
+        lives.value--
 
-  bombs.value = bombs.value.filter((bomb) => {
+        // MUERTE
+        if (lives.value <= 0) {
 
-    // MOVER BOMBA
-    bomb.y += bomb.speed
+          gameActive.value = false
 
-    // POSICIÓN REAL DEL JUGADOR
-    const playerRealY = 100 - playerY.value
+          clearInterval(enemyInterval)
+          clearInterval(gameInterval)
 
-    // DISTANCIAS
-    const xDistance = Math.abs(playerX.value - bomb.x)
-    const yDistance = Math.abs(playerRealY - bomb.y)
+          setTimeout(() => {
 
-    // ZONA SEGURA CERCA DEL HELICÓPTERO
-    const safeZone = playerY.value > 80
+            emit('complete', 'lose')
 
-    // COLISIÓN REAL
-    if (
-      !safeZone &&
-      xDistance < 4 &&
-      yDistance < 5
-    ) {
+            gameStore.health = 0
+            gameStore.gameOverReason = 'health'
+            gameStore.phase = 'gameover'
 
-      lives.value--
+          }, 200)
+        }
 
-      // ELIMINAR BOMBA
-      if (lives.value <= 0) {
-
-        triggerGameOver()
+        return false
       }
-
-      return false
     }
 
-    // DESAPARECER BOMBAS
-    return bomb.y < 92
+    return enemy.y < 100
   })
-
-  // ESCAPE
-  if (
-    playerY.value > 84 &&
-    playerX.value > 42 &&
-    playerX.value < 58
-  ) {
-
-    escaped.value = true
-
-    gameActive.value = false
-
-    clearInterval(bombInterval)
-    clearInterval(gameInterval)
-
-    setTimeout(() => {
-      emit('complete', 'win')
-    }, 500)
-  }
 }
+
+// MOVIMIENTO
 const handleKeyPress = (e) => {
 
   if (!gameActive.value) return
 
-  if (
-    e.key === 'ArrowLeft' ||
-    e.key === 'a' ||
-    e.key === 'A'
-  ) {
-    playerX.value = Math.max(2, playerX.value - 4)
+  if (e.key === 'ArrowLeft' || e.key === 'a') {
+    playerX.value = Math.max(2, playerX.value - 6)
   }
 
-  else if (
-    e.key === 'ArrowRight' ||
-    e.key === 'd' ||
-    e.key === 'D'
-  ) {
-    playerX.value = Math.min(94, playerX.value + 4)
-  }
-
-  else if (
-    e.key === 'ArrowUp' ||
-    e.key === 'w' ||
-    e.key === 'W'
-  ) {
-    playerY.value = Math.min(90, playerY.value + 4)
-  }
-
-  else if (
-    e.key === 'ArrowDown' ||
-    e.key === 's' ||
-    e.key === 'S'
-  ) {
-    playerY.value = Math.max(0, playerY.value - 4)
+  if (e.key === 'ArrowRight' || e.key === 'd') {
+    playerX.value = Math.min(94, playerX.value + 6)
   }
 }
 
+// TIMER
 const updateTimer = () => {
 
   if (!gameActive.value) return
@@ -244,32 +161,42 @@ const updateTimer = () => {
 
     timeLeft.value -= 0.1
 
-    updateBombs()
+    updateEnemies()
 
   } else {
 
-    triggerGameOver()
+    gameActive.value = false
+
+    clearInterval(enemyInterval)
+    clearInterval(gameInterval)
+
+    setTimeout(() => {
+      emit('complete', 'win')
+    }, 500)
   }
 }
 
+// CONTINUAR
 const emitResult = () => {
-  emit('complete', escaped.value ? 'win' : 'lose')
+  emit('complete', 'win')
 }
 
+// MOUNT
 onMounted(() => {
 
-  bombInterval = setInterval(spawnBomb, 650)
+  window.addEventListener('keydown', handleKeyPress)
+
+  enemyInterval = setInterval(spawnEnemy, 700)
 
   gameInterval = setInterval(updateTimer, 100)
-
-  window.addEventListener('keydown', handleKeyPress)
 })
 
+// UNMOUNT
 onBeforeUnmount(() => {
 
   window.removeEventListener('keydown', handleKeyPress)
 
-  clearInterval(bombInterval)
+  clearInterval(enemyInterval)
   clearInterval(gameInterval)
 })
 </script>
@@ -277,7 +204,7 @@ onBeforeUnmount(() => {
 <style scoped>
 .minigame-container {
   background: #111;
-  border: 3px solid #ff6600;
+  border: 3px solid #00ff00;
   padding: 1.5rem;
   font-family: 'Courier New', monospace;
   max-width: 700px;
@@ -285,66 +212,61 @@ onBeforeUnmount(() => {
 }
 
 .minigame-title {
-  color: #ff6600;
+  color: #ffff00;
   text-align: center;
-  text-shadow: 0 0 10px #ff4400;
+  text-shadow: 0 0 10px #ff8800;
   margin-bottom: 1rem;
 }
 
 .game-area {
   position: relative;
   width: 100%;
-  height: 420px;
-  background: linear-gradient(180deg, #1a0030 0%, #330020 60%, #0a0a0a 100%);
-  border: 2px solid #ff6600;
+  height: 340px;
+  background: linear-gradient(180deg, #1a0a2e 0%, #2d1040 60%, #0a0a0a 100%);
+  border: 2px solid #00ff00;
   overflow: hidden;
   margin-bottom: 1rem;
 }
 
-.helicopter {
-  position: absolute;
-  top: 16px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 3.2rem;
-  filter: drop-shadow(0 0 12px rgba(255, 200, 0, 0.6));
-  animation: hover 1s ease-in-out infinite;
-  z-index: 2;
-}
-
-@keyframes hover {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(-10px); }
-}
-
 .player {
   position: absolute;
-  width: 28px;
-  height: 28px;
-  background: #ffff00;
+  bottom: 12px;
+  width: 32px;
+  height: 32px;
+  background: #00ff66;
   clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-  transition: all 0.08s;
-  filter: drop-shadow(0 0 8px #ffff00);
+  transition: left 0.08s;
+  filter: drop-shadow(0 0 6px #00ff66);
   z-index: 10;
 }
 
-.bomb {
+.item {
   position: absolute;
+  width: 34px;
+  height: 34px;
   font-size: 1.6rem;
-  filter: drop-shadow(0 0 6px rgba(255, 80, 0, 0.8));
-  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  animation: float 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px currentColor);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
 
 .game-stats {
   position: absolute;
   top: 10px;
   right: 12px;
-  color: #ffff00;
+  color: #00ff66;
   font-weight: bold;
   display: flex;
   gap: 1rem;
   font-size: 0.95rem;
-  text-shadow: 0 0 4px rgba(255, 255, 0, 0.5);
   z-index: 5;
 }
 
@@ -356,25 +278,24 @@ onBeforeUnmount(() => {
   background: rgba(0, 0, 0, 0.92);
   padding: 2rem;
   text-align: center;
-  border: 2px solid #ff6600;
-  color: #ff6600;
+  border: 2px solid #ffff00;
+  color: #ffff00;
   z-index: 20;
 }
 
 .game-over h3 {
   font-size: 2rem;
   margin: 0;
-  text-shadow: 0 0 10px rgba(255, 102, 0, 0.7);
+  text-shadow: 0 0 10px rgba(255, 255, 0, 0.7);
 }
 
 .game-over p {
   font-size: 1.1rem;
   margin-top: 0.5rem;
-  color: #ffaa44;
 }
 
 .instructions {
-  color: #ffaa66;
+  color: #88ff88;
   font-size: 0.9rem;
   margin-bottom: 1rem;
   text-align: center;
@@ -384,9 +305,9 @@ onBeforeUnmount(() => {
   display: block;
   margin: 0 auto;
   padding: 0.8rem 2rem;
-  background: #ff6600;
+  background: #00ff66;
   color: #000;
-  border: 2px solid #ff6600;
+  border: 2px solid #00ff66;
   font-family: 'Courier New', monospace;
   font-weight: bold;
   cursor: pointer;
@@ -396,7 +317,12 @@ onBeforeUnmount(() => {
 
 .continue-btn:hover {
   background: #000;
-  color: #ff6600;
+  color: #00ff66;
+}
+.enemy {
+  position: absolute;
+  font-size: 1.8rem;
+  z-index: 5;
 }
 .lives {
   position: absolute;

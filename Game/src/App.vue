@@ -605,7 +605,7 @@ watch(() => game.phase, (newPhase) => {
 }
 
 .intro-layout .scene-area {
-  flex: 0.6;
+  flex: 1.4;
   border-bottom: 2px solid #333;
 }
 

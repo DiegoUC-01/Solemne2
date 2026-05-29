@@ -42,9 +42,9 @@
 - [x] Crear `README.md` base
 
 **Diseño visual preliminar:**
-- [ ] Elegir paleta de colores retro (verdes militares, grises, amarillos cálidos)
+- [x] Elegir paleta de colores retro (verdes militares, grises, amarillos cálidos)
 - [x] Seleccionar tipografías: `Press Start 2P` + `VT323`
-- [ ] Definir assets necesarios (imágenes pixel art para fondos)
+- [x] Definir assets necesarios (imágenes pixel art para fondos)
 
 ### Objetivo de la semana:
 > Tener base documental completa, repositorio configurado y diseño visual definido antes del fin de semana.
@@ -178,18 +178,18 @@ Tener una Base del Juego completamente jugable del día 0 al día 15, con todas 
 
 ### Implementar pruebas para componentes:
 
-- [ ] StatBar.vue: verificar que muestra valores correctos
+- [x] StatBar.vue: verificar que muestra valores correctos
 
-- [ ] DecisionButtons.vue: verificar que emite eventos
+- [x] DecisionButtons.vue: verificar que emite eventos
 
 ### Docker:
 
-- [ ] Crear Dockerfile
+- [x] Crear Dockerfile
 
 ### GitHub Actions (CI/CD):
 
-- [ ] Crear workflow de Linter 
-- [ ] Crear workflow de Testing 
+- [x] Crear workflow de Linter 
+- [x] Crear workflow de Testing 
 
 ### DockerHub:
 
@@ -216,15 +216,11 @@ Flujo CI/CD funcionando con cada push: linter → pruebas → build Docker → p
  Tareas planificadas:
 ### Mejoras UI/UX:
 
-- [ ] Añadir animaciones de transición entre días
+- [x] Añadir animaciones de transición entre días
 
-- [ ] Mejorar feedback visual al tomar decisiones
+- [x] Mejorar feedback visual al tomar decisiones
 
-- [ ] Implementar efecto de partículas (polvo, lluvia opcional)
-
-- [ ] Asegurar responsividad en móviles (media queries)
-
-- [ ] Probar en navegadores: Chrome, Firefox, Edge
+- [x] Probar en navegadores: Chrome, Firefox, Edge
 
   ### Minijuegos (opcional):
 
@@ -244,25 +240,25 @@ Implementar minijuego Día 12: Atrapar gotas de lluvia
 
 ## Documentación final:
 
-- [ ] Completar README.md con:
+- [x] Completar README.md con:
 
-- [ ] Instrucciones de instalación local
+- [x] Instrucciones de instalación local
 
-- [ ] Instrucciones para ejecutar con Docker
+- [x] Instrucciones para ejecutar con Docker
 
-- [ ] Capturas de pantalla del juego
+- [x] Capturas de pantalla del juego
 
 - [ ] Link a GitHub Pages (demo)
 
-- [ ] Revisar y actualizar DESIGN.md con decisiones finales
+- [x] Revisar y actualizar DESIGN.md con decisiones finales
 
-- [ ] Revisar y completar PLANNING.md con resultados de todas las semanas
+- [x] Revisar y completar PLANNING.md con resultados de todas las semanas
 
 ### Comprobar errores:
 
-- [ ] Probar que el juego funciona correctamente
+- [x] Probar que el juego funciona correctamente
 
-- [ ] Verificar que no hay errores en consola
+- [x] Verificar que no hay errores en consola
 
 ### Entrega:
 

@@ -34,7 +34,7 @@ export const fixedEvents = {
         text: 'Es tu primer día completo en el refugio. El silencio es interrumpido por golpes desesperados en la puerta.',
       },
       {
-        text: 'Miras por la mirilla: una mujer con su hijo pequeño, ambos demacrados, con miedo en los ojos. La mujer susurra: "Por favor... mi hijo tiene hambre..."',
+        text: 'Mirás por la mirilla: una mujer con su hijo pequeño, ambos demacrados, con miedo en los ojos. La mujer susurra: "Por favor... mi hijo tiene hambre..."',
       },
     ],
     decisions: [
@@ -65,23 +65,23 @@ export const fixedEvents = {
       requiresFlag: 'refugees',
       segments: [
         {
-          text: 'La mujer y su hijo se acomodaron en un rincón. El niño tiene fiebre. Ella te mira mientras revisas las pocas provisiones que quedan.',
+          text: 'La mujer y su hijo se acomodaron en un rincón. El niño tiene fiebre. Ella te mira mientras revisás las pocas provisiones que quedan.',
         },
         {
-          text: 'El niño tose. "¿Hay suficiente para todos?", pregunta ella con voz temblorosa. Sabes que si compartes, los recursos se agotarán mucho más rápido.',
+          text: 'El niño tose. "¿Hay suficiente para todos?", pregunta ella con voz temblorosa. Sabés que si compartís, los recursos se agotarán mucho más rápido.',
         },
       ],
       decisions: [
         {
           text: 'Compartir honestamente',
           effects: { food: -2, water: -1, health: 0, morale: 15 },
-          result: 'Compartes lo que tienes. Ella asiente, agradecida. "No lo olvidaré", dice. La confianza entre ustedes se fortalece. Pero los recursos bajan.',
+          result: 'Compartís lo que tenés. Ella asiente, agradecida. "No lo olvidaré", dice. La confianza entre ustedes se fortalece. Pero los recursos bajan.',
           setsFlag: 'd2_share',
         },
         {
           text: 'Mentir sobre las provisiones',
           effects: { food: 0, water: 0, health: 0, morale: -8 },
-          result: 'Escondes algunas latas. Le dices que es todo lo que hay. Ella te mira fijamente... quizás lo sabe. La incomodidad se instala.',
+          result: 'Escondés algunas latas. Le decís que es todo lo que hay. Ella te mira fijamente... quizás lo sabe. La incomodidad se instala.',
           setsFlag: 'd2_lie',
         },
       ],
@@ -97,7 +97,7 @@ export const fixedEvents = {
           text: 'El silencio en el departamento es absoluto. Ya no se escuchan los gritos del niño ni los ruegos de la madre.',
         },
         {
-          text: 'Revisas tus provisiones. Suficiente para una persona. Te preguntas si tomaste la decisión correcta. Afuera, la ciudad arde.',
+          text: 'Revisás tus provisiones. Suficiente para una persona. Te preguntás si tomaste la decisión correcta. Afuera, la ciudad arde.',
         },
       ],
     },
@@ -118,20 +118,20 @@ export const fixedEvents = {
           text: 'La atmósfera es tensa. Ella apenas te habla. El niño llora de hambre. Las mentiras empiezan a pesar.',
         },
         {
-          text: 'A dos cuadras hay un supermercado. esta bastante destruido. Podrías ir a buscar provisiones... pero es arriesgado.',
+          text: 'A dos cuadras hay un supermercado. La vidriera está rota. Podrías ir a buscar provisiones... pero es arriesgado.',
         },
       ],
       decisions: [
         {
           text: 'Ir al supermercado',
           effects: { food: 5, water: 3, health: -3, morale: 3 },
-          result: 'Vas solo al anochecer. Encuentras latas y botellas entre los escombros. Vuelves antes del amanecer con los brazos cargados.',
+          result: 'Vas solo al anochecer. Encontrás latas y botellas entre los escombros. Volvés antes del amanecer con los brazos cargados.',
           setsFlag: 'd3_super',
         },
         {
           text: 'Quedarte a fortificar la casa',
           effects: { food: 0, water: 0, health: 2, morale: -3 },
-          result: 'Clavas tablones en las ventanas. La casa está más segura... pero el hambre no desaparece.',
+          result: 'Clavás tablones en las ventanas. La casa está más segura... pero el hambre no desaparece.',
           setsFlag: 'd3_stay',
         },
       ],
@@ -144,7 +144,7 @@ export const fixedEvents = {
       requiresFlag: 'd2_share',
       segments: [
         {
-          text: 'La mesa está vacía. Lo diste todo. El niño ya no llora, solo respira débilmente. Necesitas provisiones urgentemente.',
+          text: 'La mesa está vacía. Lo diste todo. El niño ya no llora, solo respira débilmente. Necesitás provisiones urgentemente.',
         },
         {
           text: 'Ella se acerca. "Conozco el vecindario. Si vamos juntos al supermercado, podemos traer el doble". Sus ojos reflejan determinación.',
@@ -160,7 +160,7 @@ export const fixedEvents = {
         {
           text: 'Ir solo',
           effects: { food: 5, water: 3, health: -4, morale: -2 },
-          result: 'Ella insiste en acompañarte pero te niegas. Vas solo al supermercado. Encuentras provisiones, pero no sabes si sera suficiente.',
+          result: 'Ella insiste en acompañarte pero te niegas. Vas solo al supermercado. Encontrás provisiones, pero la culpa te pesa.',
           setsFlag: 'd3_super',
         },
       ],
@@ -173,23 +173,23 @@ export const fixedEvents = {
       requiresNoFlag: 'refugees',
       segments: [
         {
-          text: 'Tus provisiones se agotan. El estómago te gruñe. A dos cuadras hay un supermercado bastante destruido.',
+          text: 'Tus provisiones se agotan. El estómago te gruñe. A dos cuadras hay un supermercado con la vidriera rota.',
         },
         {
-          text: 'No tienes a nadie que te ayude. Si no consigues comida pronto, no sobrevivirás.',
+          text: 'No tenés a nadie que te ayude. Si no conseguís comida pronto, no sobrevivirás.',
         },
       ],
       decisions: [
         {
           text: 'Ir al supermercado',
           effects: { food: 5, water: 3, health: -3, morale: 3 },
-          result: 'Vas solo. Encuentras latas y agua entre los escombros. Una figura te observa desde la oscuridad pero logras escapar.',
+          result: 'Vas solo. Encontrás latas y agua entre los escombros. Una figura te observa desde la oscuridad pero lográs escapar.',
           setsFlag: 'd3_super',
         },
         {
           text: 'No ir (quedarse)',
           effects: { food: 0, water: 0, health: -100, morale: 0 },
-          result: 'Te quedás en casa. Sin recursos. El hambre te consume. No sobrevives a la noche.',
+          result: 'Te quedás en casa. Sin recursos. El hambre te consume. No sobrevivís a la noche.',
         },
       ],
     },
@@ -207,10 +207,10 @@ export const fixedEvents = {
       requiresFlags: ['d3_super', 'refugees'],
       segments: [
         {
-          text: 'Vuelves al refugio con provisiones. Ella te recibe con alivio. El niño sonríe por primera vez.',
+          text: 'Volvés al refugio con provisiones. Ella te recibe con alivio. El niño sonríe por primera vez.',
         },
         {
-          text: 'Organizan las latas y el agua. Por un momento, casi se siente como un hogar. Pero sabes que esto es solo el principio.',
+          text: 'Organizan las latas y el agua. Por un momento, casi se siente como un hogar. Pero sabés que esto es solo el principio.',
         },
       ],
     },
@@ -222,10 +222,10 @@ export const fixedEvents = {
       requiresFlags: ['d3_super', 'd1_solo'],
       segments: [
         {
-          text: 'Vuelves solo a tu refugio. Dejas las latas sobre la mesa. El silencio te recibe como siempre.',
+          text: 'Volvés solo a tu refugio. Dejás las latas sobre la mesa. El silencio te recibe como siempre.',
         },
         {
-          text: 'Al menos tienes comida para unos días más. Pero la soledad pesa cada vez más.',
+          text: 'Al menos tenés comida para unos días más. Pero la soledad pesa cada vez más.',
         },
       ],
     },
@@ -255,20 +255,20 @@ export const fixedEvents = {
           text: 'No fuiste al supermercado. Las provisiones escasean. El niño llora de hambre y la mujer te mira con desesperación.',
         },
         {
-          text: '"¡No tenemos nada!", grita ella. "Mi hijo se está muriendo y tu no hiciste nada". La tensión explota en el refugio.',
+          text: '"¡No tenemos nada!", grita ella. "Mi hijo se está muriendo y vos no hiciste nada". La tensión explota en el refugio.',
         },
       ],
       decisions: [
         {
           text: 'Ignorar la discusión',
           effects: { food: 0, water: 0, health: 0, morale: -6 },
-          result: 'Te das la vuelta y no dices nada. Ella sigue gritando. La situación solo empeora. La desconfianza crece como una grieta en la pared.',
+          result: 'Te das la vuelta y no decís nada. Ella sigue gritando. La situación solo empeora. La desconfianza crece como una grieta en la pared.',
           setsFlag: 'd4_ignore',
         },
         {
           text: 'Echarlos del refugio',
           effects: { food: 1, water: 1, health: -3, morale: -12 },
-          result: '"¡Fuera!", gritas. La mujer toma a su hijo y sale a la calle, entre lágrimas. Te quedás solo otra vez. El silencio es peor que antes.',
+          result: '"¡Fuera!", gritás. La mujer toma a su hijo y sale a la calle, entre lágrimas. Te quedás solo otra vez. El silencio es peor que antes.',
           setsFlag: 'd4_kick',
         },
       ],
@@ -287,14 +287,14 @@ export const fixedEvents = {
       day: 6,
       title: 'LA RADIO',
       location: 'casa',
-      image: 'casa_con_tablones',
+      image: 'plaza',
       requiresFlags: ['refugees', 'd2_share'],
       segments: [
         {
-          text: 'Encuentras una radio de emergencia entre los escombros. Funciona. Una voz metálica anuncia: "El rescate está en camino. Mantengan la calma."',
+          text: 'Encontrás una radio de emergencia entre los escombros. Funciona. Una voz metálica anuncia: "El rescate está en camino. Mantengan la calma."',
         },
         {
-          text: 'La mujer se sienta a tu lado. "Vamos a salir de esta", dice. Su voz es cálida. Por primera vez en días, sientes esperanza.',
+          text: 'La mujer se sienta a tu lado. "Vamos a salir de esta", dice. Su voz es cálida. Por primera vez en días, sentís esperanza.',
         },
         {
           text: 'Ella te prepara un poco de agua con las últimas gotas. "Gracias por confiar en nosotros", susurra.',
@@ -313,27 +313,27 @@ export const fixedEvents = {
       day: 6,
       title: 'CONFRONTACIÓN',
       location: 'casa',
-      image: 'casa_con_tablones',
+      image: 'plaza',
       requiresFlags: ['refugees', 'd2_lie'],
       segments: [
         {
-          text: 'La radio de emergencia anuncia el rescate. Pero notas algo raro: falta una lata de comida. La mujer evita tu mirada.',
+          text: 'La radio de emergencia anuncia el rescate. Pero notás algo raro: falta una lata de comida. La mujer evita tu mirada.',
         },
         {
-          text: '"¿Dónde está la lata que faltaba?", preguntas. Ella se tensa. El niño empieza a llorar. Algo no está bien.',
+          text: '"¿Dónde está la lata que faltaba?", preguntás. Ella se tensa. El niño empieza a llorar. Algo no está bien.',
         },
       ],
       decisions: [
         {
           text: 'Enfadarte y pedir explicaciones',
           effects: { food: 0, water: 0, health: -2, morale: -10 },
-          result: 'Gritas. Ella confiesa entre lágrimas que se la dio al niño porque tenía hambre. La discusión sube de tono. Terminas echándolos del refugio.',
+          result: 'Gritás. Ella confiesa entre lágrimas que se la dio al niño porque tenía hambre. La discusión sube de tono. Terminás echándolos del refugio.',
           setsFlag: 'd6_kicked',
         },
         {
           text: 'Callar y perdonar',
           effects: { food: -1, water: 0, health: 0, morale: -3 },
-          result: 'Respiras hondo y no dices nada. Ella baja la mirada. "Lo siento", susurra. La confianza está dañada pero al menos siguen juntos.',
+          result: 'Respirás hondo y no decís nada. Ella baja la mirada. "Lo siento", susurra. La confianza está dañada pero al menos siguen juntos.',
           setsFlag: 'd6_perdon',
         },
       ],
@@ -342,11 +342,11 @@ export const fixedEvents = {
       day: 6,
       title: 'TE ROBAN Y SE VAN',
       location: 'casa',
-      image: 'casa_con_tablones',
+      image: 'plaza',
       requiresFlag: 'd4_ignore',
       segments: [
         {
-          text: 'Despiertas y algo no está bien. La mujer y el niño ya no están. Revisas tus provisiones: se llevaron la mitad.',
+          text: 'Despertás y algo no está bien. La mujer y el niño ya no están. Revisás tus provisiones: se llevaron la mitad.',
         },
         {
           text: 'Sobre la mesa, una nota garabateada: "Perdón. Mi hijo no podía más." Estás solo otra vez, y con menos recursos.',
@@ -356,7 +356,7 @@ export const fixedEvents = {
         {
           text: 'Seguir adelante',
           effects: { food: -2, water: -1, health: -3, morale: -8 },
-          result: 'No hay nada que hacer. Se fueron. Te quedas mirando la nota. La soledad es absoluta.',
+          result: 'No hay nada que hacer. Se fueron. Te quedás mirando la nota. La soledad es absoluta.',
           setsFlag: 'd6_alone',
         },
       ],
@@ -365,21 +365,21 @@ export const fixedEvents = {
       day: 6,
       title: 'LA RADIO',
       location: 'casa',
-      image: 'casa_con_tablones',
+      image: 'plaza',
       requiresFlags: ['d1_solo'],
       segments: [
         {
-          text: 'Encuentras una radio de emergencia entre los escombros. Una voz metálica dice: "El rescate está en camino."',
+          text: 'Encontrás una radio de emergencia entre los escombros. Una voz metálica dice: "El rescate está en camino."',
         },
         {
-          text: 'Estás solo. Nadie celebra la noticia contigo. Pero al menos hay una esperanza.',
+          text: 'Estás solo. Nadie celebra la noticia con vos. Pero al menos hay una esperanza.',
         },
       ],
       decisions: [
         {
           text: 'Escuchar la radio',
           effects: { food: 0, water: 0, health: 0, morale: 5 },
-          result: 'La radio crepita. Escuchas mensajes de otros supervivientes. No estás completamente solo en el mundo.',
+          result: 'La radio crepita. Escuchás mensajes de otros supervivientes. No estás completamente solo en el mundo.',
         },
       ],
     },
@@ -387,14 +387,14 @@ export const fixedEvents = {
       day: 6,
       title: 'DESPUÉS DE LA TORMENTA',
       location: 'casa',
-      image: 'casa_con_tablones',
+      image: 'plaza',
       requiresFlag: 'd4_kick',
       segments: [
         {
-          text: 'Ya no están. Los echaste. Por un lado, tienes más comida para ti. Por otro, el silencio es ensordecedor.',
+          text: 'Ya no están. Los echaste. Por un lado, tenés más comida para vos. Por otro, el silencio es ensordecedor.',
         },
         {
-          text: 'La radio de emergencia anuncia el rescate. "Ojalá estén bien allá afuera".',
+          text: 'La radio de emergencia anuncia el rescate. "Ojalá estén bien allá afuera", pensás.',
         },
       ],
       decisions: [
@@ -421,7 +421,7 @@ export const fixedEvents = {
         text: 'Una noche, el cielo se ilumina de naranja. Explosiones sacuden la ciudad. Los cristales de las ventanas vibran.',
       },
       {
-        text: 'El bombardeo se acerca. Tienes que decidir rápido dónde refugiarte. Cada decisión tiene consecuencias.',
+        text: 'El bombardeo se acerca. Tenés que decidir rápido dónde refugiarte. Cada decisión tiene consecuencias.',
       },
     ],
     decisions: [
@@ -434,7 +434,7 @@ export const fixedEvents = {
       {
         text: 'Quedarte en la casa',
         effects: { food: 0, water: 0, health: -6, morale: -5 },
-        result: 'Te quedas protegiendo las provisiones. Una explosión cercana derrumba parte del techo. Sales lastimado pero conservaste todo.',
+        result: 'Te quedás protegiendo las provisiones. Una explosión cercana derrumba parte del techo. Salís lastimado pero conservaste todo.',
         setsFlag: 'd7_casa',
       },
     ],
@@ -448,24 +448,24 @@ export const fixedEvents = {
       day: 8,
       title: 'FIEBRE POR RADIACIÓN',
       location: 'casa',
-      image: 'casa_con_tablones',
+      image: 'plaza',
       requiresFlag: 'refugees',
       segments: [
         {
-          text: 'Te despertas empapado en sudor. La radiación del bombardeo te pasó factura. Fiebre alta. Apenas puedes moverte.',
+          text: 'Te despertás empapado en sudor. La radiación del bombardeo te pasó factura. Fiebre alta. Apenas podés moverte.',
         },
         {
           text: 'La mujer coloca un trapo húmedo en tu frente. "No te voy a dejar solo", dice. Su hijo te trae un poco de agua.',
         },
         {
-          text: 'Gracias a sus cuidados, la fiebre no es tan grave. Te recuperas más rápido de lo esperado.',
+          text: 'Gracias a sus cuidados, la fiebre no es tan grave. Te recuperás más rápido de lo esperado.',
         },
       ],
       decisions: [
         {
           text: 'Aceptar su ayuda',
           effects: { food: -1, water: -1, health: 5, morale: 10 },
-          result: 'Ella te cuida durante la noche. Te da agua y te limpia el sudor. "Estamos juntos en esto", dice. Te recuperas.',
+          result: 'Ella te cuida durante la noche. Te da agua y te limpia el sudor. "Estamos juntos en esto", dice. Te recuperás.',
         },
       ],
     },
@@ -473,11 +473,11 @@ export const fixedEvents = {
       day: 8,
       title: 'FIEBRE POR RADIACIÓN',
       location: 'casa',
-      image: 'casa_con_tablones',
+      image: 'plaza',
       requiresNoFlag: 'refugees',
       segments: [
         {
-          text: 'Te despiertas ardiendo en fiebre. La radiación del bombardeo te golpeó fuerte. No puedes levantarte de la cama.',
+          text: 'Te despertás ardiendo en fiebre. La radiación del bombardeo te golpeó fuerte. No podés levantarte de la cama.',
         },
         {
           text: 'Estás solo. No hay nadie que te traiga agua ni te cuide. Las horas pasan y la fiebre no cede.',
@@ -487,7 +487,7 @@ export const fixedEvents = {
         {
           text: 'Resistir como puedas',
           effects: { food: -1, water: -1, health: -8, morale: -5 },
-          result: 'La fiebre te consume. Pasás el día en cama. Apenas puedes beber agua. Pero sobrevives... por ahora.',
+          result: 'La fiebre te consume. Pasás el día en cama. Apenas podés beber agua. Pero sobrevivís... por ahora.',
         },
       ],
     },
@@ -506,7 +506,7 @@ export const fixedEvents = {
         text: 'Necesitás medicina urgente. La fiebre bajó pero la tos persiste. A tres cuadras hay una farmacia.',
       },
       {
-        text: 'Pero salir de día es peligroso: hay saqueadores. Ir de noche es más seguro pero no verás bien. ¿Qué haces?',
+        text: 'Pero salir de día es peligroso: hay saqueadores. Ir de noche es más seguro pero no verás bien. ¿Qué hacés?',
       },
     ],
     decisions: [
@@ -517,15 +517,15 @@ export const fixedEvents = {
           failure: { food: -1, water: 0, health: -12, morale: -6 },
         },
         successRate: 0.5,
-        successResult: 'Encuentras la farmacia. Agarras medicina y vendas. Logras escapar antes de que lleguen los saqueadores.',
-        failureResult: 'Los saqueadores te ven. Te golpean y te roban. Vuelves al refugio herido y sin medicina.',
+        successResult: 'Encontrás la farmacia. Agarrás medicina y vendas. Lográs escapar antes de que lleguen los saqueadores.',
+        failureResult: 'Los saqueadores te ven. Te golpean y te roban. Volvés al refugio herido y sin medicina.',
         random: true,
         setsFlag: 'd9_day',
       },
       {
         text: 'Ir de noche (-visibilidad, menos riesgo)',
         effects: { food: 0, water: 0, health: 8, morale: 3 },
-        result: 'Vas de noche. Cuesta encontrar lo que necesitas en la oscuridad, pero al menos no hay saqueadores. Vuelves con algo de medicina.',
+        result: 'Vas de noche. Cuesta encontrar lo que necesitás en la oscuridad, pero al menos no hay saqueadores. Volvés con algo de medicina.',
         setsFlag: 'd9_night',
       },
     ],
@@ -542,7 +542,7 @@ export const fixedEvents = {
     day: 11,
     title: 'RADIO: RESCATE EN 4 DÍAS',
     location: 'casa',
-    image: 'casa_con_tablones',
+    image: 'plaza',
     segments: [
       {
         text: 'La radio crepita con fuerza. Una voz clara: "Equipo de rescate en camino. Helicóptero llegará en 4 días. Repito: 4 días."',
@@ -561,7 +561,7 @@ export const fixedEvents = {
       {
         text: 'Solo escuchar',
         effects: { food: 0, water: 0, health: 0, morale: 3 },
-        result: 'Escuchas en silencio. Anotas las coordenadas. Al menos nadie más sabe dónde estás.',
+        result: 'Escuchás en silencio. Anotás las coordenadas. Al menos nadie más sabe dónde estás.',
         setsFlag: 'd11_listened',
       },
     ],
@@ -575,21 +575,21 @@ export const fixedEvents = {
       day: 12,
       title: 'BANDIDOS',
       location: 'casa',
-      image: 'casa_con_tablones',
+      image: 'plaza',
       requiresFlag: 'refugees',
       segments: [
         {
           text: 'Golpes fuertes en la puerta. Tres hombres armados con palos y cadenas. "¡Sabemos que tienen comida! ¡Abran o tiramos la puerta!"',
         },
         {
-          text: 'La mujer toma al niño y se esconde en el rincón. Te mira. Están juntos en esto. Podemos pelear... o negociar.',
+          text: 'La mujer toma al niño y se esconde en el rincón. Te mira. Están juntos en esto. Podés pelear... o negociar.',
         },
       ],
       decisions: [
         {
           text: 'Pelear',
           effects: { food: 0, water: 0, health: -15, morale: 8 },
-          result: 'Agarras lo que encuentras y peleas. Con ayuda de la mujer, logran repelerlos. Estás herido pero conservaste los suministros.',
+          result: 'Agarrás lo que encontrás y peleás. Con ayuda de la mujer, logran repelerlos. Estás herido pero conservaste los suministros.',
           setsFlag: 'd12_fought',
         },
         {
@@ -604,26 +604,26 @@ export const fixedEvents = {
       day: 12,
       title: 'BANDIDOS',
       location: 'casa',
-      image: 'casa_con_tablones',
+      image: 'plaza',
       requiresNoFlag: 'refugees',
       segments: [
         {
           text: 'La puerta se sacude. Tres hombres armados. "¡Sabemos que estás solo! ¡Danos todo o te matamos!"',
         },
         {
-          text: 'Estás solo. No hay nadie que te ayude. Pelear sería un suicidio, puedo intentarlo. o negociar, que significa quedarte sin nada.',
+          text: 'Estás solo. No hay nadie que te ayude. Pelear sería un suicidio. Pero negociar significa quedarte sin nada.',
         },
       ],
       decisions: [
         {
           text: 'Pelear',
           effects: { food: 0, water: 0, health: -100, morale: 0 },
-          result: 'Intentas pelear pero te superan en número. Los bandidos no tienen piedad. Es el fin.',
+          result: 'Intentás pelear pero te superan en número. Los bandidos no tienen piedad. Es el fin.',
         },
         {
           text: 'Negociar',
           effects: { food: -3, water: -2, health: -2, morale: -10 },
-          result: 'Les das todo. Se ríen y se van. Te quedas solo, sin provisiones y con el orgullo destrozado.',
+          result: 'Les das todo. Se ríen y se van. Te quedás solo, sin provisiones y con el orgullo destrozado.',
           setsFlag: 'd12_negotiated_solo',
         },
       ],
@@ -638,7 +638,7 @@ export const fixedEvents = {
       day: 13,
       title: 'ÚLTIMAS RESERVAS',
       location: 'casa',
-      image: 'casa_con_tablones',
+      image: 'plaza',
       requiresFlags: ['refugees', 'd12_fought'],
       segments: [
         {
@@ -661,11 +661,11 @@ export const fixedEvents = {
       day: 13,
       title: 'ÚLTIMAS RESERVAS',
       location: 'casa',
-      image: 'casa_con_tablones',
+      image: 'plaza',
       requiresFlags: ['refugees', 'd12_negotiated'],
       segments: [
         {
-          text: 'Solo queda una lata escondida que los bandidos no encontraron. La pones sobre la mesa. Tres personas, una lata.',
+          text: 'Solo queda una lata escondida que los bandidos no encontraron. La ponés sobre la mesa. Tres personas, una lata.',
         },
         {
           text: 'El niño está pálido. Tiene fiebre y apenas puede mantenerse despierto. La madre te mira. "Por favor... dale la mitad a mi hijo."',
@@ -674,14 +674,14 @@ export const fixedEvents = {
       decisions: [
         {
           text: 'Darle la lata al niño',
-          effects: { food: 0, water: 0, health: -5, morale: 20 },
-          result: 'Le das la lata al niño. Come despacio. La madre te abraza llorando. Te quedas sin comer, pero tu conciencia está limpia.',
+          effects: { food: 0, water: 0, health: -5, morale: 12 },
+          result: 'Le das la lata al niño. Come despacio. La madre te abraza llorando. Te quedás sin comer, pero tu conciencia está limpia.',
           setsFlag: 'd13_gave',
         },
         {
           text: 'Dividirla entre los tres',
-          effects: { food: -1, water: 0, health: -6, morale: -30 },
-          result: 'Divides la lata en tres porciones diminutas. Nadie se llena, pero al menos es algo. El niño sigue débil.',
+          effects: { food: -1, water: 0, health: -6, morale: -3 },
+          result: 'Dividís la lata en tres porciones diminutas. Nadie se llena, pero al menos es algo. El niño sigue débil.',
           setsFlag: 'd13_divided',
         },
       ],
@@ -690,27 +690,27 @@ export const fixedEvents = {
       day: 13,
       title: 'ÚLTIMAS RESERVAS',
       location: 'casa',
-      image: 'casa_con_tablones',
+      image: 'plaza',
       requiresFlags: ['d12_negotiated_solo'],
       segments: [
         {
-          text: 'Solo queda una lata. La escondiste bien y los bandidos no la encontraron. Es todo lo que tienes.',
+          text: 'Solo queda una lata. La escondiste bien y los bandidos no la encontraron. Es todo lo que tenés.',
         },
         {
-          text: 'Estás solo. La moral está por los suelos. Pero el rescate llegará en dos días. Tienes que resistir.',
+          text: 'Estás solo. La moral está por los suelos. Pero el rescate llegará en dos días. Tenés que resistir.',
         },
       ],
       decisions: [
         {
           text: 'Comer ahora',
           effects: { food: 0, water: 0, health: 3, morale: 2 },
-          result: 'Abres la lata y comes. Sabe a gloria. Pero ya no tienes nada para mañana.',
+          result: 'Abrís la lata y comés. Sabe a gloria. Pero ya no tenés nada para mañana.',
           setsFlag: 'd13_ate',
         },
         {
           text: 'Racionar para mañana',
           effects: { food: 0, water: 0, health: -3, morale: -2 },
-          result: 'Guardas la lata para mañana. El hambre te consume, pero al menos tendrás algo después.',
+          result: 'Guardás la lata para mañana. El hambre te consume, pero al menos tendrás algo después.',
           setsFlag: 'd13_rationed',
         },
       ],
@@ -732,7 +732,7 @@ export const fixedEvents = {
           text: 'Afuera cae una lluvia oscura, radioactiva. No se puede salir. El refugio es lo único que los protege.',
         },
         {
-          text: 'Todavía estás adolorido por la pelea con los bandidos, pero gracias al día de reposo puedes moverte. La mujer y el niño están a salvo.',
+          text: 'Todavía estás adolorido por la pelea con los bandidos, pero gracias al día de reposo podés moverte. La mujer y el niño están a salvo.',
         },
         {
           text: '"Mañana es el día", dice ella. "El helicóptero viene mañana." Se toman de las manos. Solo queda resistir una noche más.',
@@ -768,7 +768,7 @@ export const fixedEvents = {
           text: 'La lluvia negra golpea las ventanas. No se puede salir. Estás solo, encerrado en tu refugio.',
         },
         {
-          text: 'Te sientas en un rincón y esperas. El sonido de la lluvia es hipnótico. Mañana es el día del rescate.',
+          text: 'Te sentás en un rincón y esperás. El sonido de la lluvia es hipnótico. Mañana es el día del rescate.',
         },
         {
           text: 'Solo una noche más. Lo has logrado. Contra todo pronóstico, llegaste hasta aquí.',
@@ -786,7 +786,7 @@ export const randomEvents = [
   {
     title: 'Mochila abandonada',
     segments: [
-      { text: 'Encuentras una mochila militar abandonada. Dentro hay latas de comida, botellas de agua y unas vendas.' },
+      { text: 'Encontrás una mochila militar abandonada. Dentro hay latas de comida, botellas de agua y unas vendas.' },
     ],
     effects: { food: 2, water: 1, health: 2, morale: 3 },
     location: 'calle',
@@ -862,12 +862,3 @@ export const minigameEvents = {
     lose: { health: -20, morale: -10, message: 'Una bomba te golpeó de lleno.' },
   },
 }
-
-export const transitionTexts = [
-  'El sol se oculta tras los edificios destruidos...',
-  'Otra noche de gritos y silencio...',
-  'Amanece un nuevo día en el apocalipsis...',
-  'La noche fue tranquila... demasiado tranquila...',
-  'Despertás con el sonido de cristales rotos...',
-  'Un nuevo día. Otro día más...',
-]

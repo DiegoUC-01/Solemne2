@@ -139,7 +139,7 @@ const updateTimer = () => {
       setTimeout(() => {
 
         gameStore.health = 0
-        gameStore.gameOverReason = 'dehydration'
+        gameStore.gameOverReason = 'health'
         gameStore.phase = 'gameover'
 
       }, 200)

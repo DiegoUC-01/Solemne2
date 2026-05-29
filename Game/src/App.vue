@@ -114,7 +114,6 @@
                       :text="game.currentEvent.segments[game.currentSegment].text"
                       :speed="speedValue"
                       @complete="onStoryComplete"
-                      @skip="onStorySkip"
                     />
                   </div>
                 </div>
@@ -143,7 +142,6 @@
                 :text="game.currentEvent.segments[game.currentSegment].text"
                 :speed="speedValue"
                 @complete="onStoryComplete"
-                @skip="onStorySkip"
               />
             </div>
           </div>
@@ -360,9 +358,6 @@ function goToMenu() {
 function onStoryComplete() {
   audio.playClick()
   game.advanceSegment()
-}
-
-function onStorySkip() {
 }
 
 function handleNewGame() {
@@ -863,8 +858,8 @@ watch(() => game.phase, (newPhase) => {
   border-left: 3px solid #3b82f6;
 }
 
-.journal-entry.uso {
-  border-left: 3px solid #fbbf24;
+.journal-entry.minijuego {
+  border-left: 3px solid #a855f7;
 }
 
 .entry-day {

@@ -76,11 +76,12 @@ export const useGameStore = defineStore('game', {
         if (this.currentEvent.type === 'intro') {
           this.day = 1
           this.advanceDay()
-        } else if (this.currentEvent.type === 'victory') {
-          this.phase = 'victory'
         } else if (this.currentEvent.decisions) {
           this.phase = 'decision'
         } else {
+          if (this.currentEvent.effects) {
+            this.applyEffects(this.currentEvent.effects)
+          }
           this.addToJournal({
             type: 'evento',
             title: this.currentEvent.title || 'Evento aleatorio',

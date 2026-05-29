@@ -103,11 +103,11 @@ const updateEnemies = () => {
     enemy.y += enemy.speed
 
     // COLISIÓN
-    if (enemy.y > 82) {
+    if (enemy.y > 86 && enemy.y < 96) {
 
       const distance = Math.abs(playerX.value - enemy.x)
 
-      if (distance < 12) {
+      if (distance < 5) {
 
         lives.value--
 

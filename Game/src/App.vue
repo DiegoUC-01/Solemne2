@@ -178,24 +178,54 @@
             </div>
           </div>
 
-          <div v-else-if="game.phase === 'minigame'" class="minigame-screen">
-            <CatchRainGame
-              v-if="game.currentEvent?.type === 'catchRain'"
-              @complete="handleMinigameComplete"
-            />
-            <FindCansGame
-              v-else-if="game.currentEvent?.type === 'findCans'"
-              @complete="handleMinigameComplete"
-            />
-            <EscapeGame
-              v-else-if="game.currentEvent?.type === 'escape'"
-              @complete="handleMinigameComplete"
-            />
-            <div v-else class="minigame-fallback">
-              <p>Minijuego no disponible</p>
-              <button class="continue-btn" @click="game.advanceDay()">CONTINUAR</button>
-            </div>
-          </div>
+  <div v-else-if="game.phase === 'minigame'" class="minigame-screen">
+
+  <div
+    v-if="showMinigameIntro"
+    class="minigame-intro"
+  >
+    <h2>{{ game.currentEvent?.title }}</h2>
+
+    <p>
+      {{ game.currentEvent?.description || 'Preparate para el minijuego, cuidado que si pierdes, moriras.' }}
+    </p>
+
+    <button @click="showMinigameIntro = false">
+      COMENZAR
+    </button>
+  </div>
+
+  <template v-else>
+
+    <CatchRainGame
+      v-if="game.currentEvent?.type === 'catchRain'"
+      @complete="handleMinigameComplete"
+    />
+
+    <FindCansGame
+      v-else-if="game.currentEvent?.type === 'findCans'"
+      @complete="handleMinigameComplete"
+    />
+
+    <EscapeGame
+      v-else-if="game.currentEvent?.type === 'escape'"
+      @complete="handleMinigameComplete"
+    />
+
+    <div v-else class="minigame-fallback">
+      <p>Minijuego no disponible</p>
+
+      <button
+        class="continue-btn"
+        @click="game.advanceDay()"
+      >
+        CONTINUAR
+      </button>
+    </div>
+
+  </template>
+
+</div>
 
           <div v-else-if="game.phase === 'gameover'" class="gameover-screen">
             <div class="gameover-content">
@@ -317,6 +347,7 @@ const game = useGameStore()
 const audio = useAudio()
 const showJournal = ref(false)
 const textSpeed = ref('normal')
+const showMinigameIntro = ref(true)
 
 
 
@@ -388,6 +419,8 @@ function handleDecision(index) {
 }
 
 function handleMinigameComplete(result) {
+  showMinigameIntro.value = true
+  
   audio.playClick()
   if (result === 'win') {
     audio.playVictory()

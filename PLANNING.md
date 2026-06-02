@@ -264,22 +264,33 @@ Implementar minijuego Día 12: Atrapar gotas de lluvia
 
 Enviar correo al profesor con:
 
-- [ ] Nombres de integrantes
+- [x] Nombres de integrantes
 
-- [ ] Link al repositorio GitHub
+- [x] Link al repositorio GitHub
 
-- [ ] Link a GitHub Pages
+- [x] Link a GitHub Pages
 
-- [ ] Link a DockerHub 
+- [x] Link a DockerHub 
 
  Objetivo de la semana:
 Proyecto robusto, documentado, testeado y entregado. Versión final jugable y profesional.
 
  Lo que se logró completar:
-(Se llena al final de la semana)
+entregado
 
- Lo que NO se logró:
-(Se llena al final de la semana)
 
- Notas:
-(Problemas encontrados, soluciones, cambios de plan)
+### Mejoras
+
+-[ ] Aumentar rama decisiones 
+
+-[ ] Arreglar imagenes para tener mas coherencia
+
+-[ ] Musica de fondo
+
+-[ ] Finales alternativos
+
+-[ ] Aumento de decisiones por dia
+
+-[ ] (Si alcanza el tiempo) Agregar minijuego
+
+

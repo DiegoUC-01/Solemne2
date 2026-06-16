@@ -162,9 +162,9 @@ c
   - Desarrollo local sin CORS, frontend en :5173, backend en :3000
 
 **: Verificación y tests finales:**
-- [ ] Instalar dependencias backend: `pnpm install` → 148 packages
-- [ ] Ejecutar tests backend: `pnpm test` → 29/29 pasando
-- [ ] Ejecutar tests frontend: `pnpm test` → 19/19 pasando
+- [ ] Instalar dependencias backend: `pnpm install`
+- [ ] Ejecutar tests backend: `pnpm test` 
+- [ ] Ejecutar tests frontend: `pnpm test`
 - [ ] Verificar estructura de archivos completa
 - [ ] Verificar que CI/CD detecta ambos proyectos
 

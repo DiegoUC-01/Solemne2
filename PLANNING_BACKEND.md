@@ -27,7 +27,7 @@
 ### Tareas planificadas:
 
 **Repositorio y estructura:**
-- [ ] Crear estructura de carpetas del proyecto:
+- [x] Crear estructura de carpetas del proyecto:
   ```
   Solemne2/
   ├── .github/workflows/main.yml
@@ -44,8 +44,8 @@
   ├── Game/              (existente)
   └── compose.yml
   ```
-- [ ] Crear `.env.example`. 
-- [ ] Crear `.gitignore` del backend. 
+- [x] Crear `.env.example`. 
+- [x] Crear `.gitignore` del backend. 
 
 **CI/CD — GitHub Actions :**
 - [ ] Crear `.github/workflows/main.yml`:
@@ -59,8 +59,8 @@
 - [ ] Crear `compose.yml` en raíz:
 
 **Documentación :**
-- [ ] Actualizar `DESIGN.md` con arquitectura fullstack.
-- [ ] Crear `PLANNING_BACKEND.md` (este archivo).
+- [x] Actualizar `DESIGN.md` con arquitectura fullstack.
+- [x] Crear `PLANNING_BACKEND.md` (este archivo).
 - [ ] Enviar correo al profesor con integrantes y link al repositorio
 
 **Modelos MongoDB :**
@@ -69,8 +69,8 @@
 - [ ] `models/Dialogue.js` — contextHash, prompt, response, model, tokensUsed
 
 **Configuración inicial:**
-- [ ] `config/db.js` — conexión a MongoDB con Mongoose
-- [ ] `package.json` del backend con todas las dependencias declaradas
+- [x] `config/db.js` — conexión a MongoDB con Mongoose
+- [x] `package.json` del backend con todas las dependencias declaradas
 
 ### Objetivo de la semana:
 > CI/CD corriendo en cada push, Docker Compose levanta 3 servicios (aunque backend aún vacío), documentación lista, modelos definidos. El repo ya muestra estructura profesional.

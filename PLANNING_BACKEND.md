@@ -68,8 +68,8 @@
 - [ ] `models/Dialogue.js` — contextHash, prompt, response, model, tokensUsed
 
 **Configuración inicial:**
-- [ ] `config/db.js` — conexión a MongoDB con Mongoose
-- [ ] `package.json` del backend con todas las dependencias declaradas
+- [x] `config/db.js` — conexión a MongoDB con Mongoose
+- [x] `package.json` del backend con todas las dependencias declaradas
 
 ### Objetivo de la semana:
 > CI/CD corriendo en cada push, Docker Compose levanta 3 servicios (aunque backend aún vacío), documentación lista, modelos definidos. El repo ya muestra estructura profesional.

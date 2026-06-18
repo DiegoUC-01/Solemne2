@@ -61,7 +61,6 @@
 **Documentación :**
 - [x] Actualizar `DESIGN.md` con arquitectura fullstack.
 - [x] Crear `PLANNING_BACKEND.md` (este archivo).
-- [ ] Enviar correo al profesor con integrantes y link al repositorio
 
 **Modelos MongoDB :**
 - [ ] `models/User.js` — username, email, password (bcrypt), timestamps
@@ -69,8 +68,8 @@
 - [ ] `models/Dialogue.js` — contextHash, prompt, response, model, tokensUsed
 
 **Configuración inicial:**
-- [x] `config/db.js` — conexión a MongoDB con Mongoose
-- [x] `package.json` del backend con todas las dependencias declaradas
+- [ ] `config/db.js` — conexión a MongoDB con Mongoose
+- [ ] `package.json` del backend con todas las dependencias declaradas
 
 ### Objetivo de la semana:
 > CI/CD corriendo en cada push, Docker Compose levanta 3 servicios (aunque backend aún vacío), documentación lista, modelos definidos. El repo ya muestra estructura profesional.

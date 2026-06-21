@@ -18,61 +18,68 @@
 - **CI/CD:** GitHub Actions
 - **Containerización:** Docker + Docker Compose
 
+**Objetivo Principal:** Transformar el frontend standalone (Solemne 2) en una aplicación fullstack con backend Express, MongoDB, autenticación JWT, Google Gemini, Docker Compose y CI/CD.
+
 ---
 
 ## Semana 1 — Infraestructura, CI/CD y Setup (16 jun – 22 jun)
 
-> **Objetivo:** Tener repo funcional desde el día 1. GitHub Actions corriendo en cada push. Docker funcionando. Documentación base lista.
+> **Objetivo:** Tener repo funcional desde el día 1. GitHub Actions corriendo en cada push. Documentación base lista.
 
 ### Tareas planificadas:
-
-**Repositorio y estructura:**
-- [x] Crear estructura de carpetas del proyecto:
-  ```
-  Solemne2/
-  ├── .github/workflows/main.yml
-  ├── backend/
-  │   ├── Dockerfile
-  │   ├── package.json
-  │   ├── .env.example
-  │   ├── .gitignore
-  │   └── src/
-  │       ├── config/db.js
-  │       ├── models/User.js
-  │       ├── models/Game.js
-  │       └── models/Dialogue.js
-  ├── Game/              (existente)
-  └── compose.yml
-  ```
-- [x] Crear `.env.example`. 
-- [x] Crear `.gitignore` del backend. 
-
-**CI/CD — GitHub Actions :**
-- [ ] Crear `.github/workflows/main.yml`:
-  - Job `lint-and-test-frontend`
-  - Job `lint-and-test-backend` 
-  - Job `build-and-push` 
-
-**Docker :**
-- [ ] Crear `backend/Dockerfile` 
-- [ ] Actualizar `Game/Dockerfile` 
-- [ ] Crear `compose.yml` en raíz:
-
-**Documentación :**
-- [x] Actualizar `DESIGN.md` con arquitectura fullstack.
-- [x] Crear `PLANNING_BACKEND.md` (este archivo).
-
-**Modelos MongoDB :**
-- [ ] `models/User.js` — username, email, password (bcrypt), timestamps
-- [ ] `models/Game.js` — día, fase, recursos, flags, journal, eventos, estado
-- [ ] `models/Dialogue.js` — contextHash, prompt, response, model, tokensUsed
-
+**Reorganizar estructura fullstack del proyecto**
+- [ ] Renombrar `DESING.md` → `DESIGN.md` 
+- [ ] Crear `.gitignore` raíz
+- [ ] Crear `.gitignore` en backend
+- [ ] Crear `.env` en backend
+- [ ] Crear `.gitattributes` (CRLF normalization)
+- [ ] Desarrollar planificación del BACKEND `PLANNING_BACKEND.md` 
+- [ ] Verificar estructura final:
+```
+Solemne2/
+├── .gitattributes
+├── .gitignore
+├── DESIGN.md
+├── PLANNING.md
+├── README.md              
+├── .github/workflows/
+│   ├── build.yml
+│   ├── lint.yml
+│   ├── main.yml
+│   └── test.yml
+├── Backend/
+│   └── ... (modelos vacíos por ahora)
+└── Game/
+    └── ... (frontend)
+```
 **Configuración inicial:**
+
 - [x] `config/db.js` — conexión a MongoDB con Mongoose
 - [x] `package.json` del backend con todas las dependencias declaradas
 
+**Implementar modelos Mongoose - User, Game, Dialogue**
+
+- [ ] Implementar modelo `User`-`backend/src/models/User.js` 
+- [ ] Implementar modelo `Game`-`backend/src/models/Game.js` 
+- [ ] Implementar modelo `Dialogue`-`backend/src/models/Dialogue.js` 
+
+**Implementar autenticacion JWT con cookies httpOnly**
+
+- [ ] Crear middleware `auth.js` - | `backend/src/middleware/auth.js` |
+- [ ] Crear rutas `auth.js`-| `backend/src/routes/auth.js` |
+- [ ] Crear `index.js`-| `backend/src/index.js` |
+
+**Unificar workflows y agregar CI/CD con push a DockerHub**
+
+- [ ] Unificar 4 workflows de GitHub Actions en 1 solo `main.yml` | `.github/workflows/main.yml` |
+- Agregar job: lint + test frontend 
+- Agregar job: lint + test backend 
+- Agregar job: build + push a DockerHub
+- [ ] eliminar Workflows antiguos  
+- [ ] Configurar secrets en GitHub (DOCKER_USERNAME, DOCKER_TOKEN) | GitHub Secrets |
+
 ### Objetivo de la semana:
-> CI/CD corriendo en cada push, Docker Compose levanta 3 servicios (aunque backend aún vacío), documentación lista, modelos definidos. El repo ya muestra estructura profesional.
+> Dejar la Estructura fullstack lista, CI/CD corriendo en cada push, documentación lista, modelos definidos,auth JWT funcionando.
 
 ### Lo que se logró completar:
 
@@ -84,11 +91,41 @@
 
 ---
 
-## Semana 2 — Backend Core: Auth, Lógica de Juego, Gemini (23 jun – 29 jun)
+## Semana 2 — Logica de juego + Gemini + Tests (22 jun – 28 jun)
 
-> **Objetivo:** Backend completamente funcional. Cada capa se commitea y pushea por separado para que CI/CD valide incrementalmente.
+### Objetivo: Lógica del juego en backend, Gemini AI, tests
 
 ### Tareas planificadas:
+**Implementar logica de juego en el Backend - creacion, inicio, avance y decisiones**
+
+- [ ] Copiar `events.js` al backend -`Game/src/data/events.js` a `backend/src/data/events.js`
+- [ ] Crear e Implementar rutas del juego `games.js`(rutas del juego) - `backend/src/routes/games.js`
+
+**Implementar logica de juego en el backend - minijuegos, continuacion y finalizacion**
+
+- [ ] Agregar rutas `continue` y `minigame` + fallbacks + parseo JSON
+- [ ] Reemplazar fallback temporales por 5 eventos narrativos variados
+- [ ] Agregar `extractAndParseJSON` 
+
+**Integrar Google Gemini para generacion de eventos narrativos**
+
+- [ ] Crear servicio `gemini.js` - `backend/src/services/gemini.js` 
+- [ ] Crear rutas `dialogue.js` - `backend/src/routes/dialogue.js` 
+- [ ] Integrar `generateAIEvient()`en `games.js` - `backend/src/routes/games.js`
+- [ ] Agregar `GEMINI_API_KEY` al `.env`
+
+**Agregar tests unitarios de auth, games y gemini**
+
+- [ ] Crear test de auth - `backend/src/tests/auth.spec.js`
+- [ ] Crear test de logica de juegos - `backend/src/tests/games.spec.js`
+- [ ] Crear test de Gemini - `backend/src/tests/games.spec.js`
+
+**Implementar cliente HTTP y store de autenticacion**
+
+- [ ] Crear `api/index.js`(cliente HTTP) - `Game/src/api/index.js`
+- [ ] Crear `serverStore` - `Game/src/stores/serverStore.js` 
+- [ ] Actualizar `App.vue`(agregar login/register) - `Game/src/App.vue`
+
 
 **Auth:**
 - [ ] Crear `middleware/auth.js`. 
@@ -96,41 +133,8 @@
 - [ ] Crear `src/index.js`.
 - [ ] Crear `src/tests/auth.spec.js`
 
-**Lógica de juego:**
-- [ ] Crear `routes/games.js`
-- [ ] Eventos fijos del juego original (días 0, 1, 2, 3, 4, 6)
-- [ ] Minijuegos (día 5: catchRain, día 10: findCans, día 15: escape)
-- [ ] Sistema de eventos múltiples por día.
-**Endpoints de juego:**
-- [ ] `POST /api/games`
-- [ ] `GET /api/games/user`
-- [ ] `GET /api/games/:id` 
-- [ ] `PUT /api/games/:id/start` 
-- [ ] `PUT /api/games/:id/advance-segment` 
-- [ ] `PUT /api/games/:id/decision` 
-- [ ] `PUT /api/games/:id/continue` 
-- [ ] `PUT /api/games/:id/minigame`
-
-**Tests de lógica de juego:**
-- [ ] Crear `src/tests/games.spec.js`
-
-**Día: Integración Gemini + Caché:**
-- [ ] Crear `services/gemini.js`:
-  - `clamp()` — utilidad de rango
-  - `buildGamePrompt(day, flags, food, water, health, morale, previousEvents)` — prompt contextual en español pidiendo JSON estructurado
-  - `generateContextHash()` — SHA256 de día + flags + recursos para clave de caché
-- [ ] Crear `routes/dialogue.js`:
-  - `POST /api/dialogue/generate`:
-    1. Calcular contextHash
-    2. Buscar en colección dialogues
-    3. Si existe → devolver cacheado
-    4. Si no → llamar a Gemini, guardar en MongoDB, devolver
-  - `GET /api/dialogue/cache/stats` — contador de diálogos en caché
-- [ ] Fallback: si Gemini falla, devuelve evento genérico predefinido
-- [ ] Crear `src/tests/gemini.spec.js` :
-
 ### Objetivo de la semana:
-> Backend funcional de extremo a extremo: auth, lógica de juego completa, 8 endpoints de partida, integración con Gemini cacheada. 29 tests pasando. CI/CD verde en cada push.
+> Implementar toda la logica del juego en el backend, integrar Google Gemini, escribir tests y conectar el frontend al backend.
 
 ### Lo que se logró completar:
 
@@ -143,39 +147,48 @@
 
 c
 
-## Semana 3 — Integración Frontend, Testing Final y Entrega (30 jun – 2 jul)
+## Semana 3 — Integración Frontend-Backend, Testing Final, Docker y Entrega (29 jun – 2 jul)
 
-> **Objetivo:** Frontend conectado al backend. Tests pasando en ambos lados. Todo funcional con Docker Compose. Entrega final.
+> **Contexto:** El `gameStore.js` actual solo funciona en modo local, hay que agregarle `serverGameId` y metodos que deleguen las acciones al backend cuando se está en modo online. También hay que actualizar `App.vue` para que soporte ambos modos.
 
 ### Tareas planificadas:
 
-**Cliente HTTP del frontend:**
-- [ ] Crear `src/api/index.js` — cliente HTTP para consumir backend
+**Conectar gameStore con backend para modo online**
 
-**Día: Store de autenticación y juego online:**
-- [ ] Crear `src/stores/serverStore.js`:
-- [ ] Modificar `src/stores/gameStore.js`
-**Configuración de Vite:**
-- [ ] Actualizar `vite.config.js`:
-  - Agregar `server.proxy`: `/api` → `http://localhost:3000`
-  - Desarrollo local sin CORS, frontend en :5173, backend en :3000
+- [ ] Actualizar `gameStore.js` - `Game/src/stores/gameStore.js`
+- [ ] Actualizar `App.vue` (Modo online) - `Game/src/App.vue`
+- [ ] Actualizar `vite-config.js` (Agregar proxy) - `Game/vite.config.js`
 
-**: Verificación y tests finales:**
-- [ ] Instalar dependencias backend: `pnpm install`
-- [ ] Ejecutar tests backend: `pnpm test` 
-- [ ] Ejecutar tests frontend: `pnpm test`
-- [ ] Verificar estructura de archivos completa
-- [ ] Verificar que CI/CD detecta ambos proyectos
+**Docker: configurar Docker Compose y Dockerfiles para produccion**
 
-**Día 3: Entrega final:**
-- [ ] Revisar DESIGN.md completo y actualizado
-- [ ] Revisar PLANNING_BACKEND.md con todas las semanas completadas
-- [ ] Último push a GitHub → CI/CD ejecuta todo el pipeline
-- [ ] Verificar que las imágenes quedaron publicadas en DockerHub
-- [ ] Enviar entrega final (si aplica)
+- [ ] Crear `compose.yml` en la raiz
+- [ ] Crear `docker-compose.prod.yml` (producción)
+- [ ] Crear Dockerfile en el Backend - `backend/Dockerfile`
+- [ ] Crear .dockerignore en el Backend - `backend/.dockerignore`
+- [ ] Actualizar `Game/Dockerfile` para produccion
+- [ ] Mover imágenes de `src/assets/Imagen/` a `public/Imagen/` - `Game/public/Imagen/`
+- [ ] Crear `.env` en la raiz
+
+**Test: actualizar tests, verificar cobertura y corregir bugs**
+
+- [ ] Actualizar tests del frontend
+- [ ] Verificar que todo los tests pasan
+- [ ] Build de producción del frontend
+- [ ] Correccion de bugs comunes
+
+**Finalizar documentacion y preparar entrega final**
+
+- [ ] Actualizar `README.md`
+- [ ] Revisar `DESIGN.md`
+- [ ] Actualizar `PLANNING_BACKEND.md`
+- [ ] Push Final a GitHub
+- [ ] Verificar CI/CD en GitHub Actions
+- [ ] Verificar imagenes en DockerHub
+- [ ] Probar `docker-compose.prod.yml`
+- [ ] Enviar entrega final
 
 ### Objetivo de la semana:
-> Proyecto fullstack robusto. Frontend y backend integrados. 48 tests pasando. Docker Compose funcional. CI/CD completo. Entrega final.
+> Conectar el gameStore al backend para modo online, dockerizar todo, verificar tests, documentar y entregar.
 
 ### Lo que se logró completar:
 

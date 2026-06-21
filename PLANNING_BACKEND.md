@@ -28,13 +28,13 @@
 
 ### Tareas planificadas:
 **Reorganizar estructura fullstack del proyecto**
-- [ ] Renombrar `DESING.md` → `DESIGN.md` 
-- [ ] Crear `.gitignore` raíz
-- [ ] Crear `.gitignore` en backend
-- [ ] Crear `.env` en backend
-- [ ] Crear `.gitattributes` (CRLF normalization)
-- [ ] Desarrollar planificación del BACKEND `PLANNING_BACKEND.md` 
-- [ ] Verificar estructura final:
+- [x] Renombrar `DESING.md` → `DESIGN.md` 
+- [x] Crear `.gitignore` raíz
+- [x] Crear `.gitignore` en backend
+- [x] Crear `.env` en backend
+- [x] Crear `.gitattributes` (CRLF normalization)
+- [x] Desarrollar planificación del BACKEND `PLANNING_BACKEND.md` 
+- [x] Verificar estructura final:
 ```
 Solemne2/
 ├── .gitattributes

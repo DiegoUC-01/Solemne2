@@ -65,9 +65,9 @@ Solemne2/
 
 **Implementar autenticacion JWT con cookies httpOnly**
 
-- [ ] Crear middleware `auth.js` - | `backend/src/middleware/auth.js` |
-- [ ] Crear rutas `auth.js`-| `backend/src/routes/auth.js` |
-- [ ] Crear `index.js`-| `backend/src/index.js` |
+- [x] Crear middleware `auth.js` - | `backend/src/middleware/auth.js` |
+- [x] Crear rutas `auth.js`-| `backend/src/routes/auth.js` |
+- [x] Crear `index.js`-| `backend/src/index.js` |
 
 **Unificar workflows y agregar CI/CD con push a DockerHub**
 

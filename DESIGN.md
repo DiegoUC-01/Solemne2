@@ -163,7 +163,7 @@ La elección de **Vue.js 3** como framework principal se justifica porque:
 ## 5. Mejoras y Correcciones (Solemne 2 → Solemne 3)
 
 - **Eventos múltiples por día**: El sistema original tenía 1 evento por día. Ahora cada día puede tener hasta 3 eventos, combinando eventos fijos predefinidos con eventos generados por IA.
-- **Persistencia en servidor**: Las partidas se guardan en MongoDB. Al cerrar y volver a abrir el navegador, el jugador puede iniciar sesión y su progreso se mantiene. Nota: con MongoDB local no funciona entre distintos dispositivos; para cross-device se requiere MongoDB Atlas (cloud).
+- **Persistencia en servidor**: Las partidas se guardan en MongoDB. Al cerrar y volver a abrir el navegador, el jugador puede iniciar sesión y su progreso se mantiene.
 - **Autenticación de usuarios**: Registro y login con JWT (cookies httpOnly) para identificar jugadores.
 - **Diálogos dinámicos con IA**: Eventos narrativos generados por Google Gemini que complementan los eventos fijos, enriqueciendo la experiencia sin repetir contenido.
 - **Caché de IA**: Las respuestas generadas por Gemini se almacenan en MongoDB indexadas por SHA256 del contexto, evitando llamadas repetidas a la API externa.

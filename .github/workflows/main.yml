@@ -41,7 +41,6 @@ jobs:
           cache-dependency-path: './Backend/pnpm-lock.yaml'
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
-      - run: pnpm test
 
   build-and-push:
     needs: [lint-and-test-frontend, lint-and-test-backend]

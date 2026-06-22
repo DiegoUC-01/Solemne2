@@ -432,7 +432,7 @@ Badge en el header con el nombre de usuario. Botón "SALIR" para cerrar sesión.
 ### Indicador de modo ONLINE
 Badge amarillo en el header que aparece cuando la partida está conectada al servidor (`game.serverGameId` no es null).
 
-### Selector de partidas (pendiente)
+### Selector de partidas 
 Lista las partidas guardadas del usuario desde `GET /api/games/user`. Permite continuar una partida existente o empezar una nueva. *(Nota: implementado en el backend, pendiente de UI en frontend.)*
 
 ---

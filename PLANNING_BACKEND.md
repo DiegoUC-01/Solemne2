@@ -59,9 +59,9 @@ Solemne2/
 
 **Implementar modelos Mongoose - User, Game, Dialogue**
 
-- [ ] Implementar modelo `User`-`backend/src/models/User.js` 
-- [ ] Implementar modelo `Game`-`backend/src/models/Game.js` 
-- [ ] Implementar modelo `Dialogue`-`backend/src/models/Dialogue.js` 
+- [x] Implementar modelo `User`-`backend/src/models/User.js` 
+- [x] Implementar modelo `Game`-`backend/src/models/Game.js` 
+- [x] Implementar modelo `Dialogue`-`backend/src/models/Dialogue.js` 
 
 **Implementar autenticacion JWT con cookies httpOnly**
 
@@ -71,18 +71,18 @@ Solemne2/
 
 **Unificar workflows y agregar CI/CD con push a DockerHub**
 
-- [ ] Unificar 4 workflows de GitHub Actions en 1 solo `main.yml` | `.github/workflows/main.yml` |
+- [x] Unificar 4 workflows de GitHub Actions en 1 solo `main.yml` | `.github/workflows/main.yml` |
 - Agregar job: lint + test frontend 
 - Agregar job: lint + test backend 
 - Agregar job: build + push a DockerHub
-- [ ] eliminar Workflows antiguos  
-- [ ] Configurar secrets en GitHub (DOCKER_USERNAME, DOCKER_TOKEN) | GitHub Secrets |
+- [x] eliminar Workflows antiguos  
+- [x] Configurar secrets en GitHub (DOCKER_USERNAME, DOCKER_TOKEN) | GitHub Secrets |
 
 ### Objetivo de la semana:
 > Dejar la Estructura fullstack lista, CI/CD corriendo en cada push, documentación lista, modelos definidos,auth JWT funcionando.
 
 ### Lo que se logró completar:
-
+Se implemento todo lo Planificado de la semana
 ### Lo que NO se logró:
 —
 

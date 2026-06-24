@@ -1,18 +1,13 @@
 import { Router } from 'express'
 import Game from '../models/Game.js'
 import { authMiddleware } from '../middleware/auth.js'
+import { clamp, generateContextHash, buildGamePrompt } from '../services/gemini.js'
+import { GoogleGenerativeAI } from '@google/generative-ai'
+import Dialogue from '../models/Dialogue.js'
 import { fixedEvents, minigameEvents } from '../data/events.js'
 
 const router = Router()
 router.use(authMiddleware)
-
-// =====================
-// FUNCIONES AUXILIARES
-// =====================
-
-function clamp(value, min, max) {
-  return Math.max(min, Math.min(max, value))
-}
 
 function applyDailyConsumption(game) {
   game.food = clamp(game.food - 1, 0, game.maxStat)
@@ -41,19 +36,165 @@ function getMinigame(day) {
   return minigameEvents[day] || null
 }
 
-function applyEffects(game, effects) {
-  if (!effects) return
-  if (effects.food) game.food = clamp(game.food + effects.food, 0, game.maxStat)
-  if (effects.water) game.water = clamp(game.water + effects.water, 0, game.maxStat)
-  if (effects.health) game.health = clamp(game.health + effects.health, 0, game.maxHealth)
-  if (effects.morale) game.morale = clamp(game.morale + effects.morale, 0, game.maxMorale)
+const LOCATION_IMAGES = {
+  casa: 'casa_con_tablones',
+  calle: 'plaza',
+  supermercado: 'superme',
+  farmacia: 'FARMACIA1',
+  refugio: 'casa_con_tablones',
+  rescate: 'helicóptero_irse',
 }
 
-// =====================
-// RUTAS CRUD DE PARTIDA
-// =====================
+function getDayContext(day) {
+  if (day <= 3) return 'Primeros días. El jugador está en su casa refugiado. Afuera hay caos: saqueos, incendios, gritos. La casa es el único lugar seguro.'
+  if (day <= 7) return 'Días intermedios. Los recursos empiezan a escasear. El jugador sigue en casa pero la situación empeora. Puede oír bombardeos lejanos.'
+  if (day <= 11) return 'Días avanzados. El refugio está desgastado. El hambre y la sed apremian. La radio anuncia que el rescate se acerca.'
+  return 'Días finales. El jugador está al borde del colapso. El helicóptero de rescate llegará pronto. La tensión es máxima dentro de la casa.'
+}
 
-// POST /api/games — Crear nueva partida (día 0, intro)
+function extractAndParseJSON(text) {
+  const clean = (s) => s.replace(/: *\+(\d)/g, ': $1').replace(/,\s*}/g, '}').replace(/,\s*]/g, ']')
+
+  // Intento 1: parse directo
+  try { return JSON.parse(clean(text)) } catch {}
+
+  // Intento 2: extraer primer objeto JSON válido
+  const firstBrace = text.indexOf('{')
+  const lastBrace = text.lastIndexOf('}')
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    try { return JSON.parse(clean(text.slice(firstBrace, lastBrace + 1))) } catch {}
+  }
+
+  // Intento 3: quitar bloques markdown y reintentar
+  const noMarkdown = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim()
+  try { return JSON.parse(clean(noMarkdown)) } catch {}
+  const b2 = noMarkdown.indexOf('{')
+  const e2 = noMarkdown.lastIndexOf('}')
+  if (b2 >= 0 && e2 > b2) {
+    try { return JSON.parse(clean(noMarkdown.slice(b2, e2 + 1))) } catch {}
+  }
+
+  throw new Error(`JSON inválido. Respuesta cruda: ${text.substring(0, 300)}`)
+}
+
+const FALLBACK_EVENTS = [
+  {
+    title: 'SILENCIO INQUIETANTE',
+    location: 'casa',
+    image: 'casa_con_tablones',
+    segments: [
+      { text: 'El día transcurre en calma tensa. Afuera solo se escucha el viento entre los escombros.' },
+      { text: 'Revisas tus suministros. Por ahora, estás a salvo. Pero sabes que la calma nunca dura.' },
+    ],
+    decisions: [
+      { text: 'Descansar y recuperar fuerzas', effects: { food: 0, water: 0, health: 3, morale: 5 }, result: 'Te recuestas contra la pared. El silencio te envuelve. Mañana será otro día.' },
+      { text: 'Reforzar el refugio', effects: { food: 0, water: 0, health: -2, morale: 3 }, result: 'Tablones y clavos. El refugio está más seguro. Te duelen los brazos pero te sientes productivo.' },
+    ],
+  },
+  {
+    title: 'RUIDOS EN LA OSCURIDAD',
+    location: 'casa',
+    image: 'casa_con_tablones',
+    segments: [
+      { text: 'La noche cae y con ella llegan los sonidos. Algo se arrastra por el pasillo del edificio. Rasguños. Pasos. Tu corazón se acelera.' },
+      { text: 'Te quedas inmóvil, conteniendo la respiración. Los ruidos se alejan lentamente. ¿Era una persona o algo peor? No quieres averiguarlo.' },
+    ],
+    decisions: [
+      { text: 'Investigar el pasillo', effects: { food: 0, water: 0, health: -5, morale: 3 }, result: 'Con un palo en la mano, abres la puerta. El pasillo está vacío. Solo encuentras huellas de sangre fresca.' },
+      { text: 'Atrancar la puerta', effects: { food: 0, water: 0, health: 0, morale: -3 }, result: 'Refuerzas la puerta con muebles. No sabes qué había afuera, pero estás a salvo. La curiosidad te carcome.' },
+    ],
+  },
+  {
+    title: 'HAMBRE PUNZANTE',
+    location: 'casa',
+    image: 'casa_con_tablones',
+    segments: [
+      { text: 'El estómago te gruñe con fuerza. Abres la alacena: quedan muy pocas cosas. La desesperación comienza a instalarse.' },
+      { text: 'Recuerdas que debajo del fregadero guardaste una lata para emergencias. Pero si la abres ahora, no tendrás nada para mañana.' },
+    ],
+    decisions: [
+      { text: 'Abrir la lata ahora', effects: { food: 1, water: 0, health: 2, morale: 5 }, result: 'La lata de frijoles sabe a gloria. El hambre cede por ahora. Pero sientes culpa por ceder tan pronto.' },
+      { text: 'Guardarla para peores momentos', effects: { food: 0, water: 0, health: -3, morale: -2 }, result: 'Cierras la alacena. La lata sigue ahí. Tu cuerpo te grita que la abras, pero tu mente sabe que mañana podría ser peor.' },
+    ],
+  },
+  {
+    title: 'MENSAJE EN LA PARED',
+    location: 'casa',
+    image: 'casa_con_tablones',
+    segments: [
+      { text: 'Algo te despierta en medio de la noche. Hay un nuevo mensaje pintado con aerosol en la pared de enfrente, visible por la ventana.' },
+      { text: '"ZONA DE RESCATE A 5 KM — MARTES AL AMANECER". No sabes si es real o una trampa de saqueadores. El martes es mañana.' },
+    ],
+    decisions: [
+      { text: 'Prepararte para ir al amanecer', effects: { food: 0, water: 0, health: 0, morale: 8 }, result: 'Preparas una mochila con lo justo. La esperanza te inunda. Solo esperas que no sea una emboscada.' },
+      { text: 'Ignorarlo, es muy arriesgado', effects: { food: 0, water: 0, health: 0, morale: -5 }, result: 'Te alejas de la ventana. "Seguro es una trampa", murmuras. Pero una parte de ti se pregunta si acabas de perder tu única oportunidad.' },
+    ],
+  },
+  {
+    title: 'EL DIARIO',
+    location: 'casa',
+    image: 'casa_con_tablones',
+    segments: [
+      { text: 'Entre los escombros de un armario, encuentras un diario viejo. Perteneció al dueño anterior del departamento.' },
+      { text: 'Las últimas páginas describen ubicaciones de suministros ocultos en el edificio. También hablan de un búnker secreto...' },
+    ],
+    decisions: [
+      { text: 'Buscar el búnker en el edificio', effects: { food: 3, water: 2, health: -4, morale: 8 }, result: 'Bajas a los estacionamientos subterráneos. Encuentras un cuarto oculto con provisiones. ¡Un hallazgo increíble! Pero casi te atrapa un infectado.' },
+      { text: 'Quedarte, es demasiado peligroso', effects: { food: 0, water: 0, health: 0, morale: -2 }, result: 'Guardas el diario en tu bolsillo. Quizás más adelante te animes a explorar. Por ahora, la seguridad es lo primero.' },
+    ],
+  },
+]
+
+function getFallbackEvent(day) {
+  const ev = { ...FALLBACK_EVENTS[day % FALLBACK_EVENTS.length] }
+  ev.day = day
+  ev.type = 'ai'
+  return ev
+}
+
+async function generateAIEvent(game) {
+  try {
+    const dayContext = getDayContext(game.day)
+    const prompt = buildGamePrompt(
+      game.day, game.flags, game.food, game.water, game.health, game.morale,
+      `${game.eventsThisDay} eventos hoy`,
+      dayContext
+    )
+    const contextHash = generateContextHash(game.day, game.flags, game.food, game.water, game.health, game.morale)
+
+    const cached = await Dialogue.findOne({ contextHash })
+    if (cached) {
+      const enriched = { ...cached.response, type: 'ai', cached: true }
+      if (!enriched.image) enriched.image = LOCATION_IMAGES[enriched.location] || 'casa_con_tablones'
+      if (!enriched.day) enriched.day = game.day
+      return enriched
+    }
+
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
+    const result = await model.generateContent(prompt)
+    const text = result.response.text()
+
+    const response = extractAndParseJSON(text)
+
+    if (!response.image) {
+      response.image = LOCATION_IMAGES[response.location] || 'casa_con_tablones'
+    }
+    response.day = game.day
+
+    await Dialogue.findOneAndUpdate(
+      { contextHash },
+      { contextHash, prompt, response, model: 'gemini-2.5-flash', tokensUsed: result.response.usageMetadata?.totalTokenCount || 0 },
+      { upsert: true, new: true }
+    )
+
+    return { ...response, type: 'ai', cached: false }
+  } catch (err) {
+    console.error('Error generando evento IA:', err.message)
+    return getFallbackEvent(game.day)
+  }
+}
+
 router.post('/', async (req, res) => {
   try {
     const game = await Game.create({
@@ -75,7 +216,6 @@ router.post('/', async (req, res) => {
   }
 })
 
-// GET /api/games/user — Listar partidas del usuario
 router.get('/user', async (req, res) => {
   try {
     const games = await Game.find({ userId: req.userId }).sort({ updatedAt: -1 })
@@ -85,7 +225,6 @@ router.get('/user', async (req, res) => {
   }
 })
 
-// GET /api/games/:id — Obtener una partida
 router.get('/:id', async (req, res) => {
   try {
     const game = await Game.findOne({ _id: req.params.id, userId: req.userId })
@@ -96,7 +235,6 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-// PUT /api/games/:id/start — Iniciar día 1
 router.put('/:id/start', async (req, res) => {
   try {
     const game = await Game.findOne({ _id: req.params.id, userId: req.userId })
@@ -124,7 +262,6 @@ router.put('/:id/start', async (req, res) => {
   }
 })
 
-// PUT /api/games/:id/advance-segment — Avanzar segmento narrativo
 router.put('/:id/advance-segment', async (req, res) => {
   try {
     const game = await Game.findOne({ _id: req.params.id, userId: req.userId })
@@ -153,7 +290,6 @@ router.put('/:id/advance-segment', async (req, res) => {
   }
 })
 
-// PUT /api/games/:id/decision — Procesar decisión
 router.put('/:id/decision', async (req, res) => {
   try {
     const game = await Game.findOne({ _id: req.params.id, userId: req.userId })
@@ -168,17 +304,12 @@ router.put('/:id/decision', async (req, res) => {
     const decision = event.decisions[decisionIndex]
     if (!decision) return res.status(400).json({ error: 'Decisión inválida' })
 
-    // Decisiones con riesgo (random)
     if (decision.random) {
       const success = Math.random() < decision.successRate
       const effects = success ? decision.effects.success : decision.effects.failure
       applyEffects(game, effects)
-      game.decisionResult = {
-        text: success ? decision.successResult : decision.failureResult,
-        success,
-      }
+      game.decisionResult = { text: success ? decision.successResult : decision.failureResult, success }
     } else {
-      // Decisiones normales (efectos fijos)
       applyEffects(game, decision.effects)
       if (decision.setsFlag) {
         game.flags = { ...game.flags, [decision.setsFlag]: true }
@@ -186,7 +317,6 @@ router.put('/:id/decision', async (req, res) => {
       game.decisionResult = { text: decision.result, success: true }
     }
 
-    // Registrar en el diario
     game.journal.push({
       day: game.day,
       type: 'decision',
@@ -204,7 +334,6 @@ router.put('/:id/decision', async (req, res) => {
     game.markModified('flags')
     game.markModified('journal')
 
-    // Verificar game over
     if (game.health <= 0 || game.morale <= 0) {
       game.phase = 'gameover'
       game.gameOverReason = game.health <= 0 ? 'health' : 'morale'
@@ -218,9 +347,78 @@ router.put('/:id/decision', async (req, res) => {
   }
 })
 
-// =====================
-// GESTIÓN DE EVENTOS
-// =====================
+router.put('/:id/continue', async (req, res) => {
+  try {
+    const game = await Game.findOne({ _id: req.params.id, userId: req.userId })
+    if (!game) return res.status(404).json({ error: 'Partida no encontrada' })
+
+    game.decisionResult = null
+    await handleEventEnd(game)
+    await game.save()
+    res.json(game.toJSON())
+  } catch (err) {
+    res.status(500).json({ error: 'Error al continuar' })
+  }
+})
+
+router.put('/:id/minigame', async (req, res) => {
+  try {
+    const game = await Game.findOne({ _id: req.params.id, userId: req.userId })
+    if (!game) return res.status(404).json({ error: 'Partida no encontrada' })
+
+    const { result } = req.body
+    const event = game.currentEvent
+    const outcome = result === 'win' ? event.win : event.lose
+
+    applyEffects(game, outcome)
+
+    game.journal.push({
+      day: game.day,
+      type: 'minijuego',
+      title: event.title,
+      description: outcome.message || `Resultado: ${result}`,
+      effects: outcome,
+      timestamp: new Date(),
+    })
+    game.markModified('journal')
+
+    if (game.health <= 0 || game.morale <= 0) {
+      game.phase = 'gameover'
+      game.gameOverReason = game.health <= 0 ? 'health' : 'morale'
+      game.status = 'lost'
+      game.decisionResult = null
+      await game.save()
+      return res.json(game.toJSON())
+    }
+
+    game.decisionResult = null
+    game.day++
+
+    if (game.day > 15) {
+      game.phase = 'victory'
+      game.status = 'won'
+      await game.save()
+      return res.json(game.toJSON())
+    }
+
+    applyDailyConsumption(game)
+
+    if (game.health <= 0 || game.morale <= 0) {
+      game.phase = 'gameover'
+      game.gameOverReason = game.health <= 0 ? 'health' : 'morale'
+      game.status = 'lost'
+      await game.save()
+      return res.json(game.toJSON())
+    }
+
+    game.eventsThisDay = 0
+    await advanceToNextEvent(game)
+    await game.save()
+    res.json(game.toJSON())
+  } catch (err) {
+    res.status(500).json({ error: 'Error al procesar minijuego' })
+  }
+})
 
 async function handleEventEnd(game) {
   game.eventsThisDay++
@@ -257,7 +455,6 @@ async function handleEventEnd(game) {
 
 async function advanceToNextEvent(game) {
   if (game.eventsThisDay === 0) {
-    // Primer evento del día: revisar si es minijuego
     const minigame = getMinigame(game.day)
     if (minigame) {
       game.currentEvent = { ...minigame }
@@ -267,7 +464,6 @@ async function advanceToNextEvent(game) {
       return
     }
 
-    // Buscar evento fijo del día
     const fixedEvent = getFixedEvent(game.day, game.flags || {})
     if (fixedEvent) {
       game.currentEvent = { ...fixedEvent, type: 'fixed' }
@@ -277,38 +473,18 @@ async function advanceToNextEvent(game) {
     }
   }
 
-  // Si no hay eventos fijos, cargar un random (por ahora placeholder)
-  // En el Día 7 esto se reemplazará con eventos IA
-  game.currentEvent = getFallbackEvent(game.day)
+  const aiEvent = await generateAIEvent(game)
+  game.currentEvent = aiEvent
   game.phase = 'story'
   game.currentSegment = 0
 }
 
-// Fallback temporal (se mejora en el Día 7 con Gemini)
-const TEMP_FALLBACK = {
-  title: 'DIA TRANQUILO',
-  location: 'casa',
-  image: 'casa_con_tablones',
-  segments: [
-    { text: 'El dia transcurre sin novedades. Afuera solo se escucha el viento.' },
-    { text: 'Revisas tus suministros. Por ahora, todo en orden.' },
-  ],
-  decisions: [
-    {
-      text: 'Descansar',
-      effects: { food: 0, water: 0, health: 3, morale: 5 },
-      result: 'Te recuestas. El silencio te envuelve.',
-    },
-    {
-      text: 'Reforzar refugio',
-      effects: { food: 0, water: 0, health: -2, morale: 3 },
-      result: 'Aseguras ventanas con tablones. Te sientes mas seguro.',
-    },
-  ],
-}
-
-function getFallbackEvent(day) {
-  return { ...TEMP_FALLBACK, day, type: 'ai' }
+function applyEffects(game, effects) {
+  if (!effects) return
+  if (effects.food) game.food = clamp(game.food + effects.food, 0, game.maxStat)
+  if (effects.water) game.water = clamp(game.water + effects.water, 0, game.maxStat)
+  if (effects.health) game.health = clamp(game.health + effects.health, 0, game.maxHealth)
+  if (effects.morale) game.morale = clamp(game.morale + effects.morale, 0, game.maxMorale)
 }
 
 export default router

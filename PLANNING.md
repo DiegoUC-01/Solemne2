@@ -98,21 +98,21 @@ Se implemento todo lo Planificado de la semana
 ### Tareas planificadas:
 **Implementar logica de juego en el Backend - creacion, inicio, avance y decisiones**
 
-- [ ] Copiar `events.js` al backend -`Game/src/data/events.js` a `backend/src/data/events.js`
-- [ ] Crear e Implementar rutas del juego `games.js`(rutas del juego) - `backend/src/routes/games.js`
+- [x] Copiar `events.js` al backend -`Game/src/data/events.js` a `backend/src/data/events.js`
+- [x] Crear e Implementar rutas del juego `games.js`(rutas del juego) - `backend/src/routes/games.js`
 
 **Implementar logica de juego en el backend - minijuegos, continuacion y finalizacion**
 
-- [ ] Agregar rutas `continue` y `minigame` + fallbacks + parseo JSON
-- [ ] Reemplazar fallback temporales por 5 eventos narrativos variados
-- [ ] Agregar `extractAndParseJSON` 
+- [x] Agregar rutas `continue` y `minigame` + fallbacks + parseo JSON
+- [x] Reemplazar fallback temporales por 5 eventos narrativos variados
+- [x] Agregar `extractAndParseJSON` 
 
 **Integrar Google Gemini para generacion de eventos narrativos**
 
-- [ ] Crear servicio `gemini.js` - `backend/src/services/gemini.js` 
-- [ ] Crear rutas `dialogue.js` - `backend/src/routes/dialogue.js` 
-- [ ] Integrar `generateAIEvient()`en `games.js` - `backend/src/routes/games.js`
-- [ ] Agregar `GEMINI_API_KEY` al `.env`
+- [x] Crear servicio `gemini.js` - `backend/src/services/gemini.js` 
+- [x] Crear rutas `dialogue.js` - `backend/src/routes/dialogue.js` 
+- [x] Integrar `generateAIEvient()`en `games.js` - `backend/src/routes/games.js`
+- [x] Agregar `GEMINI_API_KEY` al `.env`
 
 **Agregar tests unitarios de auth, games y gemini**
 

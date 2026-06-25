@@ -126,13 +126,6 @@ Se implemento todo lo Planificado de la semana
 - [x] Crear `serverStore` - `Game/src/stores/serverStore.js` 
 - [x] Actualizar `App.vue`(agregar login/register) - `Game/src/App.vue`
 
-
-**Auth:**
-- [x] Crear `middleware/auth.js`. 
-- [x] Crear `routes/auth.js`.
-- [x] Crear `src/index.js`.
-- [x] Crear `src/tests/auth.spec.js`
-
 ### Objetivo de la semana:
 > Implementar toda la logica del juego en el backend, integrar Google Gemini, escribir tests y conectar el frontend al backend.
 
@@ -143,10 +136,10 @@ Se implemento todo lo Planificado de la semana
 —
 
 ### Notas:
-—
+— Se borró el apartado de Auth; por error de transcripción, ya estaba realizado en la semana 1 en 'Implementar autenticación JWT con cookies httpOnly'.
 
-c
 
+---
 ## Semana 3 — Integración Frontend-Backend, Testing Final, Docker y Entrega (29 jun – 2 jul)
 
 > **Contexto:** El `gameStore.js` actual solo funciona en modo local, hay que agregarle `serverGameId` y metodos que deleguen las acciones al backend cuando se está en modo online. También hay que actualizar `App.vue` para que soporte ambos modos.

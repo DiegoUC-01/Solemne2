@@ -116,22 +116,22 @@ Se implemento todo lo Planificado de la semana
 
 **Agregar tests unitarios de auth, games y gemini**
 
-- [ ] Crear test de auth - `backend/src/tests/auth.spec.js`
-- [ ] Crear test de logica de juegos - `backend/src/tests/games.spec.js`
-- [ ] Crear test de Gemini - `backend/src/tests/games.spec.js`
+- [x] Crear test de auth - `backend/src/tests/auth.spec.js`
+- [x] Crear test de logica de juegos - `backend/src/tests/games.spec.js`
+- [x] Crear test de Gemini - `backend/src/tests/games.spec.js`
 
 **Implementar cliente HTTP y store de autenticacion**
 
-- [ ] Crear `api/index.js`(cliente HTTP) - `Game/src/api/index.js`
-- [ ] Crear `serverStore` - `Game/src/stores/serverStore.js` 
-- [ ] Actualizar `App.vue`(agregar login/register) - `Game/src/App.vue`
+- [x] Crear `api/index.js`(cliente HTTP) - `Game/src/api/index.js`
+- [x] Crear `serverStore` - `Game/src/stores/serverStore.js` 
+- [x] Actualizar `App.vue`(agregar login/register) - `Game/src/App.vue`
 
 
 **Auth:**
-- [ ] Crear `middleware/auth.js`. 
-- [ ] Crear `routes/auth.js`.
-- [ ] Crear `src/index.js`.
-- [ ] Crear `src/tests/auth.spec.js`
+- [x] Crear `middleware/auth.js`. 
+- [x] Crear `routes/auth.js`.
+- [x] Crear `src/index.js`.
+- [x] Crear `src/tests/auth.spec.js`
 
 ### Objetivo de la semana:
 > Implementar toda la logica del juego en el backend, integrar Google Gemini, escribir tests y conectar el frontend al backend.

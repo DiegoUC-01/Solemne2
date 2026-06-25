@@ -6,10 +6,20 @@
       <header class="game-header">
         <h1 class="game-title">15 DIAS</h1>
         <div class="header-controls">
-          <span class="day-counter" v-if="game.phase !== 'menu' && game.phase !== 'rules' && game.phase !== 'settings'">
+          <span v-if="server.isLoggedIn" class="user-badge" :title="server.user?.username">
+            {{ server.user?.username }}
+          </span>
+          <span class="day-counter" v-if="game.phase !== 'menu' && game.phase !== 'rules' && game.phase !== 'settings' && game.phase !== 'login' && game.phase !== 'register'">
             DIA {{ game.day }}/15
           </span>
+          <span v-if="game.serverGameId" class="online-badge" title="Partida guardada en el servidor">ONLINE</span>
           
+          <button v-if="server.isLoggedIn" class="header-btn" @click="handleLogout">
+            SALIR
+          </button>
+          <button v-else-if="game.phase === 'menu'" class="header-btn" @click="game.phase = 'login'; authError = ''">
+            LOGIN
+          </button>
           <button class="header-btn" @click="goToMenu">
             INICIO
           </button>
@@ -30,13 +40,19 @@
               </div>
               <nav class="menu-nav">
                 <button class="menu-btn primary" @click="handleNewGame">
-                  NUEVA PARTIDA
+                  NUEVA PARTIDA (LOCAL)
+                </button>
+                <button v-if="server.isLoggedIn" class="menu-btn primary online-btn" @click="handleNewGameOnline">
+                  NUEVA PARTIDA ONLINE
                 </button>
                 <button class="menu-btn" @click="game.phase = 'rules'">
                   REGLAS
                 </button>
                 <button class="menu-btn" @click="game.phase = 'settings'">
                   CONFIGURACION
+                </button>
+                <button v-if="!server.isLoggedIn" class="menu-btn" @click="game.phase = 'login'; authError = ''">
+                  INICIAR SESION
                 </button>
               </nav>
               <div class="menu-footer">
@@ -93,6 +109,40 @@
                   </div>
                 </div>
               </div>
+              <button class="menu-btn" @click="goToMenu">VOLVER</button>
+            </div>
+          </div>
+
+          <div v-else-if="game.phase === 'login'" class="auth-screen">
+            <div class="auth-content">
+              <h2 class="auth-title">INICIAR SESION</h2>
+              <p v-if="authError" class="auth-error">{{ authError }}</p>
+              <form class="auth-form" @submit.prevent="handleLogin">
+                <input v-model="authUsername" type="text" placeholder="Usuario" class="auth-input" />
+                <input v-model="authPassword" type="password" placeholder="Contraseña" class="auth-input" />
+                <button type="submit" class="menu-btn primary">ENTRAR</button>
+              </form>
+              <p class="auth-switch">
+                ¿No tienes cuenta?
+                <button class="link-btn" @click="game.phase = 'register'; authError = ''">REGISTRATE</button>
+              </p>
+              <button class="menu-btn" @click="goToMenu">VOLVER</button>
+            </div>
+          </div>
+
+          <div v-else-if="game.phase === 'register'" class="auth-screen">
+            <div class="auth-content">
+              <h2 class="auth-title">REGISTRO</h2>
+              <p v-if="authError" class="auth-error">{{ authError }}</p>
+              <form class="auth-form" @submit.prevent="handleRegister">
+                <input v-model="authUsername" type="text" placeholder="Usuario" class="auth-input" />
+                <input v-model="authPassword" type="password" placeholder="Contraseña" class="auth-input" />
+                <button type="submit" class="menu-btn primary">CREAR CUENTA</button>
+              </form>
+              <p class="auth-switch">
+                ¿Ya tienes cuenta?
+                <button class="link-btn" @click="game.phase = 'login'; authError = ''">INICIA SESION</button>
+              </p>
               <button class="menu-btn" @click="goToMenu">VOLVER</button>
             </div>
           </div>
@@ -327,12 +377,18 @@
         </div>
       </footer>
     </div>
+
+    <div v-if="game.aiLoading" class="loading-overlay">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">GENERANDO...</p>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useGameStore } from './stores/gameStore.js'
+import { useServerStore } from './stores/serverStore.js'
 import { useAudio } from './composables/useAudio.js'
 import PixelBackground from './components/PixelBackground.vue'
 import SceneArt from './components/SceneArt.vue'
@@ -344,10 +400,18 @@ import FindCansGame from './components/minigames/FindcansGame.vue'
 import EscapeGame from './components/minigames/EscapeGame.vue'
 
 const game = useGameStore()
+const server = useServerStore()
 const audio = useAudio()
 const showJournal = ref(false)
 const textSpeed = ref('normal')
 const showMinigameIntro = ref(true)
+const authUsername = ref('')
+const authPassword = ref('')
+const authError = ref('')
+
+onMounted(() => {
+  server.fetchMe()
+})
 
 
 
@@ -394,13 +458,60 @@ function onStoryComplete() {
 function handleNewGame() {
   audio.playClick()
   audio.startMusic()
+  game.reset()
   game.startGame()
+}
+
+async function handleNewGameOnline() {
+  audio.playClick()
+  audio.startMusic()
+  game.reset()
+  await game.startGameServer()
+}
+
+async function handleLogin() {
+  try {
+    authError.value = ''
+    await server.login(authUsername.value, authPassword.value)
+    authUsername.value = ''
+    authPassword.value = ''
+    goToMenu()
+  } catch (err) {
+    authError.value = err.message || 'Error al iniciar sesión'
+  }
+}
+
+async function handleRegister() {
+  try {
+    authError.value = ''
+    if (authPassword.value.length < 6) {
+      authError.value = 'La contraseña debe tener al menos 6 caracteres'
+      return
+    }
+    await server.register(authUsername.value, authPassword.value)
+    authUsername.value = ''
+    authPassword.value = ''
+    goToMenu()
+  } catch (err) {
+    authError.value = err.message || 'Error al registrarse'
+  }
+}
+
+async function handleLogout() {
+  await server.logout()
+  audio.playClick()
+  game.reset()
+  goToMenu()
 }
 
 function handleStart() {
   audio.playClick()
-  game.day = 1
-  game.advanceDay()
+  if (game.serverGameId) {
+    game.startGameOnServer()
+  } else {
+    game.day = 1
+    game.advanceDay()
+  }
 }
 
 function handleDecision(index) {
@@ -773,6 +884,45 @@ watch(() => game.phase, (newPhase) => {
   transform: scale(1.05);
 }
 
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(255, 255, 255, 0.1);
+  border-top: 6px solid #fbbf24;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.loading-text {
+  margin-top: 20px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  color: #fbbf24;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
 .gameover-buttons, .victory-buttons {
   display: flex;
   gap: 10px;
@@ -1043,6 +1193,108 @@ watch(() => game.phase, (newPhase) => {
   font-size: clamp(13px, 1.5vw, 17px);
   color: #666;
   line-height: 1.5;
+}
+
+.user-badge {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(6px, 0.8vw, 8px);
+  color: #4ade80;
+}
+
+.online-badge {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(5px, 0.7vw, 7px);
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.15);
+  padding: 2px 6px;
+  border: 1px solid #fbbf24;
+}
+
+.online-btn {
+  background: #f59e0b !important;
+  color: #0a0a0a !important;
+  border-color: #d97706 !important;
+}
+
+.online-btn:hover {
+  background: #d97706 !important;
+  transform: scale(1.05);
+}
+
+.auth-screen {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.auth-content {
+  text-align: center;
+  padding: 20px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.auth-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(14px, 2.5vw, 22px);
+  color: #4ade80;
+  margin: 0 0 20px 0;
+  text-shadow: 0 0 15px rgba(74, 222, 128, 0.5);
+}
+
+.auth-error {
+  font-family: 'VT323', monospace;
+  font-size: clamp(14px, 1.8vw, 18px);
+  color: #ef4444;
+  margin: 0 0 16px 0;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.auth-input {
+  font-family: 'VT323', monospace;
+  font-size: clamp(16px, 2vw, 20px);
+  padding: 10px 16px;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  border: 3px solid #4a4a6a;
+  outline: none;
+  width: 100%;
+  max-width: 300px;
+  box-sizing: border-box;
+}
+
+.auth-input:focus {
+  border-color: #4ade80;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.3);
+}
+
+.auth-switch {
+  font-family: 'VT323', monospace;
+  font-size: clamp(14px, 1.5vw, 17px);
+  color: #888;
+  margin: 12px 0;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  font-family: 'VT323', monospace;
+  font-size: inherit;
+  color: #4ade80;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.link-btn:hover {
+  color: #22c55e;
 }
 
 .rules-screen, .settings-screen {

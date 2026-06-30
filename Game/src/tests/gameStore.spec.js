@@ -16,10 +16,10 @@ describe('Game Store — nueva versión', () => {
 
     it('tiene recursos iniciales correctos', () => {
       const store = useGameStore()
-      expect(store.food).toBe(10)
-      expect(store.water).toBe(8)
-      expect(store.health).toBe(100)
-      expect(store.morale).toBe(100)
+      expect(store.food).toBe(6)
+      expect(store.water).toBe(4)
+      expect(store.health).toBe(80)
+      expect(store.morale).toBe(70)
     })
 
     it('diario empieza vacío', () => {
@@ -47,8 +47,8 @@ describe('Game Store — nueva versión', () => {
 
       store.startGame()
 
-      expect(store.food).toBe(10)
-      expect(store.health).toBe(100)
+      expect(store.food).toBe(6)
+      expect(store.health).toBe(80)
       expect(store.gameOverReason).toBeNull()
       expect(store.journal).toHaveLength(0)
     })

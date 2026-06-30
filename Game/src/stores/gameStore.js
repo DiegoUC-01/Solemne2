@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { fixedEvents, randomEvents, minigameEvents } from '../data/events.js'
+import { api } from '../api/index.js'
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value))
@@ -9,10 +10,10 @@ export const useGameStore = defineStore('game', {
   state: () => ({
     day: 0,
     phase: 'menu',
-    food: 10,
-    water: 8,
-    health: 100,
-    morale: 100,
+    food: 6,
+    water: 4,
+    health: 80,
+    morale: 70,
     currentEvent: null,
     currentSegment: 0,
     decisionResult: null,
@@ -22,6 +23,8 @@ export const useGameStore = defineStore('game', {
     usedRandomEvents: [],
     gameOverReason: null,
     journal: [],
+    serverGameId: null,
+    aiLoading: false,
   }),
 
   getters: {
@@ -44,10 +47,10 @@ export const useGameStore = defineStore('game', {
     startGame() {
       this.day = 0
       this.phase = 'intro'
-      this.food = 10
-      this.water = 8
-      this.health = 100
-      this.morale = 100
+      this.food = 6
+      this.water = 4
+      this.health = 80
+      this.morale = 70
       this.currentEvent = fixedEvents[0]
       this.currentSegment = 0
       this.decisionResult = null
@@ -68,6 +71,11 @@ export const useGameStore = defineStore('game', {
     
 
     advanceSegment() {
+      if (this.serverGameId) {
+        this.advanceSegmentServer()
+        return
+      }
+
       if (!this.currentEvent) return
 
       const isLastSegment = this.currentSegment >= this.currentEvent.segments.length - 1
@@ -96,6 +104,11 @@ export const useGameStore = defineStore('game', {
     },
 
     makeDecision(decisionIndex) {
+      if (this.serverGameId) {
+        this.makeDecisionServer(decisionIndex)
+        return
+      }
+
       const event = this.currentEvent
       const decision = event.decisions[decisionIndex]
 
@@ -253,6 +266,11 @@ export const useGameStore = defineStore('game', {
     },
 
     continueAfterResult() {
+      if (this.serverGameId) {
+        this.continueAfterResultServer()
+        return
+      }
+
       this.decisionResult = null
       this.day++
 
@@ -271,6 +289,11 @@ export const useGameStore = defineStore('game', {
     },
 
     completeMinigame(result) {
+      if (this.serverGameId) {
+        this.completeMinigameServer(result)
+        return
+      }
+
       const event = this.currentEvent
       const outcome = result === 'win' ? event.win : event.lose
 
@@ -300,9 +323,88 @@ export const useGameStore = defineStore('game', {
       this.advanceDay()
     },
 
-    
+    applyServerState(serverState) {
+      if (!serverState) return
+      this.day = serverState.day ?? this.day
+      this.phase = serverState.phase ?? this.phase
+      this.food = serverState.food ?? this.food
+      this.water = serverState.water ?? this.water
+      this.health = serverState.health ?? this.health
+      this.morale = serverState.morale ?? this.morale
+      this.currentEvent = serverState.currentEvent ?? this.currentEvent
+      this.currentSegment = serverState.currentSegment ?? this.currentSegment
+      this.decisionResult = serverState.decisionResult ?? this.decisionResult
+      this.flags = serverState.flags ?? this.flags
+      this.journal = serverState.journal ?? this.journal
+      this.gameOverReason = serverState.gameOverReason ?? this.gameOverReason
+    },
+
+    async startGameServer() {
+      try {
+        const data = await api.games.create()
+        this.serverGameId = data._id
+        this.applyServerState(data)
+      } catch (err) {
+        console.error('Error al crear partida en servidor:', err)
+        this.startGame()
+      }
+    },
+
+    async startGameOnServer() {
+      if (!this.serverGameId) return
+      try {
+        const data = await api.games.start(this.serverGameId)
+        this.applyServerState(data)
+      } catch (err) {
+        console.error('Error al iniciar partida en servidor:', err)
+      }
+    },
+
+    async advanceSegmentServer() {
+      if (!this.serverGameId) return
+      try {
+        const data = await api.games.advanceSegment(this.serverGameId)
+        this.applyServerState(data)
+      } catch (err) {
+        console.error('Error al avanzar segmento en servidor:', err)
+      }
+    },
+
+    async makeDecisionServer(index) {
+      if (!this.serverGameId) return
+      try {
+        const data = await api.games.makeDecision(this.serverGameId, index)
+        this.applyServerState(data)
+      } catch (err) {
+        console.error('Error al tomar decision en servidor:', err)
+      }
+    },
+
+    async continueAfterResultServer() {
+      if (!this.serverGameId) return
+      this.aiLoading = true
+      try {
+        const data = await api.games.continue(this.serverGameId)
+        this.applyServerState(data)
+      } catch (err) {
+        console.error('Error al continuar en servidor:', err)
+      } finally {
+        this.aiLoading = false
+      }
+    },
+
+    async completeMinigameServer(result) {
+      if (!this.serverGameId) return
+      try {
+        const data = await api.games.completeMinigame(this.serverGameId, result)
+        this.applyServerState(data)
+      } catch (err) {
+        console.error('Error al completar minijuego en servidor:', err)
+      }
+    },
 
     reset() {
+      this.serverGameId = null
       this.$reset()
     },
   },

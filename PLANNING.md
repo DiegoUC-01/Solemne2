@@ -137,6 +137,8 @@ Se implemento todo lo Planificado de la semana
 
 ### Notas:
 — Se borró el apartado de Auth; por error de transcripción, ya estaba realizado en la semana 1 en 'Implementar autenticación JWT con cookies httpOnly'.
+- Se investigó una forma de no revelar la key; se decidió por la opción de desplegar el backend en Render (servicio cloud) y configurar las variables de entorno allí.
+
 
 
 ---
@@ -148,24 +150,31 @@ Se implemento todo lo Planificado de la semana
 
 **Conectar gameStore con backend para modo online**
 
-- [ ] Actualizar `gameStore.js` - `Game/src/stores/gameStore.js`
-- [ ] Actualizar `App.vue` (Modo online) - `Game/src/App.vue`
-- [ ] Actualizar `vite-config.js` (Agregar proxy) - `Game/vite.config.js`
+- [x] Actualizar `gameStore.js` - `Game/src/stores/gameStore.js`
+- [x] Actualizar `App.vue` (Modo online) - `Game/src/App.vue`
+- [x] Actualizar `vite-config.js` (Agregar proxy) - `Game/vite.config.js`
+
+**Configuracion de MongosDB Atlas y Render**
+- [ ] Desplegar backend en Render (cloud gratuito)
+- [ ] Migrar base de datos a MongoDB Atlas (cloud gratuito)
+- [ ] Conectar backend (Render) con base de datos (Atlas)
+- [ ] Arreglar CORS cross-origin para Render (sameSite: none)
+- [ ] Actualizar DESIGN.md con arquitectura de producción
 
 **Docker: configurar Docker Compose y Dockerfiles para produccion**
 
 - [ ] Crear `compose.yml` en la raiz
 - [ ] Crear `docker-compose.prod.yml` (producción)
 - [ ] Crear Dockerfile en el Backend - `backend/Dockerfile`
-- [ ] Crear .dockerignore en el Backend - `backend/.dockerignore`
+- [x] Crear .dockerignore en el Backend - `backend/.dockerignore`
 - [ ] Actualizar `Game/Dockerfile` para produccion
-- [ ] Mover imágenes de `src/assets/Imagen/` a `public/Imagen/` - `Game/public/Imagen/`
-- [ ] Crear `.env` en la raiz
+- [x] Mover imágenes de `src/assets/Imagen/` a `public/Imagen/` - `Game/public/Imagen/`
+- [x] Crear `.env` en la raiz
 
 **Test: actualizar tests, verificar cobertura y corregir bugs**
 
-- [ ] Actualizar tests del frontend
-- [ ] Verificar que todo los tests pasan
+- [x] Actualizar tests del frontend
+- [x] Verificar que todo los tests pasan
 - [ ] Build de producción del frontend
 - [ ] Correccion de bugs comunes
 
@@ -189,6 +198,6 @@ Se implemento todo lo Planificado de la semana
 —
 
 ### Notas:
-—
+— Se agregó un apartado de la configuración para MongoDB Atlas y Render.
 
 ---

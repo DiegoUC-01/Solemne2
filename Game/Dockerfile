@@ -2,12 +2,18 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-COPY package*.json ./
+RUN npm install -g pnpm
 
-RUN npm install --legacy-peer-deps
+COPY package*.json pnpm-lock.yaml* ./
+
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-EXPOSE 5173
+ENV VITE_API_URL=https://solemne2.onrender.com/
 
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+RUN pnpm build
+
+EXPOSE 4173
+
+CMD ["pnpm", "preview", "--host", "0.0.0.0"]

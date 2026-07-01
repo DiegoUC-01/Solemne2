@@ -9,7 +9,6 @@ import { fixedEvents, minigameEvents } from '../data/events.js'
 const router = Router()
 router.use(authMiddleware)
 
-//Funcion de comsumo diario de recursos
 function applyDailyConsumption(game) {
   game.food = clamp(game.food - 1, 0, game.maxStat)
   game.water = clamp(game.water - 1, 0, game.maxStat)
@@ -20,7 +19,7 @@ function applyDailyConsumption(game) {
   if (game.water <= 0) game.health = clamp(game.health - 6, 0, game.maxHealth)
   if (game.food <= 0 && game.water <= 0) game.morale = clamp(game.morale - 2, 0, game.maxMorale)
 }
-//funcion para obtener evento fijo del dia
+
 function getFixedEvent(day, flags = {}) {
   const events = fixedEvents[day]
   if (!events) return null
@@ -32,11 +31,11 @@ function getFixedEvent(day, flags = {}) {
   }
   return events[events.length - 1]
 }
-//funcion para obtener minijuego del dia
+
 function getMinigame(day) {
   return minigameEvents[day] || null
 }
-//funcion para obtener imagen segun ubicacion
+
 const LOCATION_IMAGES = {
   casa: 'casa_con_tablones',
   calle: 'plaza',
@@ -45,14 +44,14 @@ const LOCATION_IMAGES = {
   refugio: 'casa_con_tablones',
   rescate: 'helicóptero_irse',
 }
-//funcion para obtener contexto del dia que se le envia a la IA para generar eventos
+
 function getDayContext(day) {
   if (day <= 3) return 'Primeros días. El jugador está en su casa refugiado. Afuera hay caos: saqueos, incendios, gritos. La casa es el único lugar seguro.'
   if (day <= 7) return 'Días intermedios. Los recursos empiezan a escasear. El jugador sigue en casa pero la situación empeora. Puede oír bombardeos lejanos.'
   if (day <= 11) return 'Días avanzados. El refugio está desgastado. El hambre y la sed apremian. La radio anuncia que el rescate se acerca.'
   return 'Días finales. El jugador está al borde del colapso. El helicóptero de rescate llegará pronto. La tensión es máxima dentro de la casa.'
 }
-//funcion para extraer y parsear JSON de la respuesta de la IA, con varios intentos de limpieza 
+
 function extractAndParseJSON(text) {
   const clean = (s) => s.replace(/: *\+(\d)/g, ': $1').replace(/,\s*}/g, '}').replace(/,\s*]/g, ']')
 
@@ -77,7 +76,7 @@ function extractAndParseJSON(text) {
 
   throw new Error(`JSON inválido. Respuesta cruda: ${text.substring(0, 300)}`)
 }
-//Eventos de respaldo en caso de fallo de la IA
+
 const FALLBACK_EVENTS = [
   {
     title: 'SILENCIO INQUIETANTE',
@@ -145,14 +144,14 @@ const FALLBACK_EVENTS = [
     ],
   },
 ]
-//funcion para obtener evento de respaldo en caso de fallo de la IA
+
 function getFallbackEvent(day) {
   const ev = { ...FALLBACK_EVENTS[day % FALLBACK_EVENTS.length] }
   ev.day = day
   ev.type = 'ai'
   return ev
 }
-//
+
 async function generateAIEvent(game) {
   try {
     const dayContext = getDayContext(game.day)
@@ -195,7 +194,7 @@ async function generateAIEvent(game) {
     return getFallbackEvent(game.day)
   }
 }
-//ruta para crear partida
+
 router.post('/', async (req, res) => {
   try {
     const game = await Game.create({
@@ -216,7 +215,7 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: 'Error al crear partida' })
   }
 })
-//ruta para obtener todas las partidas del usuario
+
 router.get('/user', async (req, res) => {
   try {
     const games = await Game.find({ userId: req.userId }).sort({ updatedAt: -1 })
@@ -225,7 +224,7 @@ router.get('/user', async (req, res) => {
     res.status(500).json({ error: 'Error al obtener partidas' })
   }
 })
-//ruta para Cargar el estado de una partida
+
 router.get('/:id', async (req, res) => {
   try {
     const game = await Game.findOne({ _id: req.params.id, userId: req.userId })
@@ -235,7 +234,7 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ error: 'Error al obtener partida' })
   }
 })
-//ruta para Botón "COMENZAR SUPERVIVENCIA" — inicia el día 1
+
 router.put('/:id/start', async (req, res) => {
   try {
     const game = await Game.findOne({ _id: req.params.id, userId: req.userId })
@@ -262,7 +261,7 @@ router.put('/:id/start', async (req, res) => {
     res.status(500).json({ error: 'Error al iniciar el día' })
   }
 })
-//ruta para Botón "Continuar" — avanza un párrafo de la historia
+
 router.put('/:id/advance-segment', async (req, res) => {
   try {
     const game = await Game.findOne({ _id: req.params.id, userId: req.userId })
@@ -290,7 +289,7 @@ router.put('/:id/advance-segment', async (req, res) => {
     res.status(500).json({ error: 'Error al avanzar segmento' })
   }
 })
-//ruta para que el jugador elija una opción (ej: "Abrir la puerta" vs "No abrir")
+
 router.put('/:id/decision', async (req, res) => {
   try {
     const game = await Game.findOne({ _id: req.params.id, userId: req.userId })
@@ -347,7 +346,7 @@ router.put('/:id/decision', async (req, res) => {
     res.status(500).json({ error: 'Error al procesar decisión' })
   }
 })
-//ruta para Después de ver el resultado de una decisión, avanza al siguiente evento
+
 router.put('/:id/continue', async (req, res) => {
   try {
     const game = await Game.findOne({ _id: req.params.id, userId: req.userId })
@@ -361,7 +360,7 @@ router.put('/:id/continue', async (req, res) => {
     res.status(500).json({ error: 'Error al continuar' })
   }
 })
-//ruta Envía el resultado de un minijuego (ganó/perdió)
+
 router.put('/:id/minigame', async (req, res) => {
   try {
     const game = await Game.findOne({ _id: req.params.id, userId: req.userId })

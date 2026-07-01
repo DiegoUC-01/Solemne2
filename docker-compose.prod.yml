@@ -1,0 +1,8 @@
+services:
+  frontend:
+    image: (nombre de usuario de docker)/15dias-frontend:latest
+    container_name: 15dias-frontend
+    ports:
+      - "5173:4173"
+    environment:
+      VITE_API_URL: https://solemne2.onrender.com/

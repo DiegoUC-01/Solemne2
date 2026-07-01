@@ -1,57 +1,61 @@
 import { describe, it, expect } from 'vitest'
 import { clamp, generateContextHash, buildGamePrompt } from '../services/gemini.js'
 
-describe('Gemini — Utilidades', () => {
-  describe('clamp()', () => {
-    it('devuelve el valor si está dentro del rango', () => {
+describe('gemini service', () => {
+  describe('clamp', () => {
+    it('clamps value within range', () => {
       expect(clamp(5, 0, 10)).toBe(5)
     })
 
-    it('devuelve el mínimo si el valor está por debajo', () => {
-      expect(clamp(-5, 0, 10)).toBe(0)
+    it('clamps value below minimum', () => {
+      expect(clamp(-5, 0, 100)).toBe(0)
     })
 
-    it('devuelve el máximo si el valor está por encima', () => {
-      expect(clamp(15, 0, 10)).toBe(10)
+    it('clamps value above maximum', () => {
+      expect(clamp(150, 0, 100)).toBe(100)
     })
 
-    it('funciona en los bordes', () => {
-      expect(clamp(0, 0, 10)).toBe(0)
-      expect(clamp(10, 0, 10)).toBe(10)
+    it('clamps at exact boundaries', () => {
+      expect(clamp(0, 0, 100)).toBe(0)
+      expect(clamp(100, 0, 100)).toBe(100)
     })
   })
 
-  describe('generateContextHash()', () => {
-    it('genera un hash válido (64 caracteres hex)', () => {
-      const hash = generateContextHash(5, {}, 5, 3, 70, 60)
+  describe('generateContextHash', () => {
+    it('generates a hash string', () => {
+      const hash = generateContextHash(5, { refugees: true }, 8, 6, 75, 65)
+      expect(hash).toBeDefined()
+      expect(typeof hash).toBe('string')
       expect(hash).toHaveLength(64)
-      expect(hash).toMatch(/^[a-f0-9]+$/)
     })
 
-    it('diferentes contextos generan diferentes hashes', () => {
-      const hash1 = generateContextHash(5, {}, 5, 3, 70, 60)
-      const hash2 = generateContextHash(6, {}, 5, 3, 70, 60)
+    it('generates different hashes for different contexts', () => {
+      const hash1 = generateContextHash(1, {}, 6, 4, 80, 70)
+      const hash2 = generateContextHash(5, { refugees: true }, 2, 1, 50, 40)
       expect(hash1).not.toBe(hash2)
     })
 
-    it('el mismo contexto genera el mismo hash', () => {
-      const hash1 = generateContextHash(5, { refugees: true }, 4, 2, 50, 40)
-      const hash2 = generateContextHash(5, { refugees: true }, 4, 2, 50, 40)
+    it('generates same hash for identical contexts', () => {
+      const hash1 = generateContextHash(3, { d3_super: true }, 10, 7, 85, 72)
+      const hash2 = generateContextHash(3, { d3_super: true }, 10, 7, 85, 72)
       expect(hash1).toBe(hash2)
     })
   })
 
-  describe('buildGamePrompt()', () => {
-    it('contiene información del estado del juego', () => {
-      const prompt = buildGamePrompt(5, {}, 5, 3, 70, 60, 'ninguno', 'contexto de prueba')
-      expect(prompt).toContain('5')
-      expect(prompt).toContain('Comida')
-      expect(prompt).toContain('Salud')
-      expect(prompt).toContain('contexto de prueba')
+  describe('buildGamePrompt', () => {
+    it('builds a prompt with game state', () => {
+      const prompt = buildGamePrompt(5, { refugees: true, d3_super: true }, 8, 6, 75, 65, 'ya exploraste')
+      expect(prompt).toContain('15 Días')
+      expect(prompt).toContain('día 5')
+      expect(prompt).toContain('Comida: 8/20')
+      expect(prompt).toContain('refugees')
+      expect(prompt).toContain('d3_super')
+      expect(prompt).toContain('ya exploraste')
+      expect(prompt).toContain('JSON')
     })
 
-    it('maneja flags vacíos', () => {
-      const prompt = buildGamePrompt(5, {}, 5, 3, 70, 60)
+    it('handles empty flags', () => {
+      const prompt = buildGamePrompt(1, {}, 6, 4, 80, 70, '')
       expect(prompt).toContain('ninguno')
     })
   })

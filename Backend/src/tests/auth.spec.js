@@ -1,33 +1,35 @@
 import { describe, it, expect } from 'vitest'
 import jwt from 'jsonwebtoken'
 
-const SECRET = 'test-secret'
-
-describe('Auth — JWT', () => {
-  it('genera un token válido con userId', () => {
-    const token = jwt.sign({ userId: 'abc123' }, SECRET, { expiresIn: '7d' })
-    expect(token).toBeTruthy()
+describe('Auth Utilities', () => {
+  it('generates a valid JWT token', () => {
+    const secret = 'test-secret'
+    const userId = '507f1f77bcf86cd799439011'
+    const token = jwt.sign({ userId }, secret, { expiresIn: '7d' })
+    expect(token).toBeDefined()
     expect(typeof token).toBe('string')
+    expect(token.split('.')).toHaveLength(3)
   })
 
-  it('decodifica el token correctamente', () => {
-    const token = jwt.sign({ userId: 'abc123' }, SECRET, { expiresIn: '7d' })
-    const decoded = jwt.verify(token, SECRET)
-    expect(decoded.userId).toBe('abc123')
+  it('decodes a valid token correctly', () => {
+    const secret = 'test-secret'
+    const userId = '507f1f77bcf86cd799439011'
+    const token = jwt.sign({ userId }, secret, { expiresIn: '7d' })
+    const decoded = jwt.verify(token, secret)
+    expect(decoded.userId).toBe(userId)
   })
 
-  it('rechaza un token inválido', () => {
-    expect(() => jwt.verify('token-falso', SECRET)).toThrow()
+  it('rejects an invalid token', () => {
+    expect(() => jwt.verify('invalid-token', 'secret')).toThrow()
   })
 
-  it('rechaza token firmado con otro secret', () => {
-    const token = jwt.sign({ userId: 'abc123' }, 'otro-secret')
-    expect(() => jwt.verify(token, SECRET)).toThrow()
+  it('rejects a token with wrong secret', () => {
+    const token = jwt.sign({ userId: 'abc' }, 'secret-a', { expiresIn: '7d' })
+    expect(() => jwt.verify(token, 'secret-b')).toThrow()
   })
 
-  it('rechaza token expirado', () => {
-    const token = jwt.sign({ userId: 'abc123' }, SECRET, { expiresIn: '0s' })
-    // Esperar un poco para que expire
-    expect(() => jwt.verify(token, SECRET)).toThrow()
+  it('rejects an expired token', () => {
+    const token = jwt.sign({ userId: 'abc' }, 'secret', { expiresIn: '0s' })
+    expect(() => jwt.verify(token, 'secret')).toThrow()
   })
 })

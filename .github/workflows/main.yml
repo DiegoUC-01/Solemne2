@@ -62,7 +62,7 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/15dias-frontend:latest
           build-args: |
-            VITE_API_URL=https://solemne2.onrender.com/
+            VITE_API_URL=https://solemne2.onrender.com/api
 
       - name: Build and push backend
         uses: docker/build-push-action@v6

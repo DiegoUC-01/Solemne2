@@ -10,7 +10,7 @@ RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-ENV VITE_API_URL=https://solemne2.onrender.com/
+ENV VITE_API_URL=https://solemne2.onrender.com/api
 
 RUN pnpm build
 

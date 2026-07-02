@@ -12,7 +12,7 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: contraseñasegura
 
   backend:
-    build: ./backend
+    build: ./Backend
     container_name: 15dias-backend
     ports:
       - "3000:3000"

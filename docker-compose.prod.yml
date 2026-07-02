@@ -1,8 +1,8 @@
 services:
   frontend:
-    image: (diegoalvarez1)/15dias-frontend:latest
+    image: diegoalvarez1/15dias-frontend:latest
     container_name: 15dias-frontend
     ports:
       - "5173:4173"
     environment:
-      VITE_API_URL: https://solemne2.onrender.com/
+      VITE_API_URL: https://solemne2.onrender.com/api

@@ -102,47 +102,71 @@ La elección de **Vue.js 3** como framework principal se justifica porque:
 
 ### Diagrama
 
+
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                                                                             │
-│    ┌──────────┐          ┌──────────────────┐          ┌──────────────┐    │
-│    │ JUGADOR  │ ──clics──▶│    FRONTEND      │──HTTP────▶│   BACKEND    │    │
-│    │ (persona)│◄──UI─────│   (Vue 3 + Vite) │◄─HTTP─────│  (Express)   │    │
-│    └──────────┘          └──────────────────┘   JSON    └──┬───┬───────┘    │
-│                                                            │   │            │
-│                                              ┌─────────────┘   │            │
-│                                              │ guardar/leer     │ si no      │
-│                                              ▼ partidas         │ cacheado   │
-│                                        ┌──────────┐            │            │
-│                                        │ MongoDB  │            │            │
-│                                        │ users    │            │            │
-│                                        │ games    │            │            │
-│                                        │ dialogues│ ← caché    │            │
-│                                        └──────────┘            │            │
-│                                              │                 │            │
-│                                              │ si no está      │            │
-│                                              │ en caché        ▼            │
-│                                              │          ┌─────────────┐     │
-│                                              └──────────│   GEMINI    │     │
-│                                                         │  (IA)       │     │
-│                                                         └─────────────┘     │
+│    ┌──────────┐          ┌──────────────────┐          ┌───────────────┐   │
+│    │ JUGADOR  │ ──clics──▶│    FRONTEND      │──HTTP────▶│   BACKEND     │   │
+│    │ (persona)│◄──UI─────│  Vue 3 + Vite    │◄─JSON────│  Express      │   │
+│    └──────────┘          └──────────────────┘          │  Node 20      │   │
+│                          ▲                             └──┬───┬────────┘   │
+│                          │                                │   │            │
+│                          │ Docker                         │   │            │
+│                          │ localhost:5173                 │   │            │
+│                                                        guardar  si no     │
+│                                                        /leer    cacheado   │
+│                                                          │   │            │
+│                                                          ▼   │            │
+│                                                  ┌──────────────┐         │
+│                                                  │  MongoDB     │         │
+│                                                  │  Atlas (M0)  │         │
+│                                                  │  users       │         │
+│                                                  │  games       │         │
+│                                                  │  dialogues   │← caché  │
+│                                                  │  (cloud)     │         │
+│                                                  └──────────────┘         │
+│                                                          │                │
+│                                                          │ si no está     │
+│                                                          │ en caché       │
+│                                                          ▼                │
+│                                                  ┌─────────────┐          │
+│                                                  │   GEMINI    │          │
+│                                                  │  2.5 Flash  │          │
+│                                                  │  (IA)       │          │
+│                                                  └─────────────┘          │
+│                                                                             │
 │  ┌──────────────────────────────────────────────────────────────────┐       │
-│  │              DOCKER — 3 contenedores orquestados                  │       │
-│  │  ┌─────────────┐   ┌────────────────┐   ┌──────────────────────┐ │       │
-│  │  │  mongodb    │◀──│    backend     │◀──│      frontend        │ │       │
-│  │  │  mongo:7    │──▶│  Node 20 Alpine│──▶│  Node 20 Alpine+Vite │ │       │
-│  │  │  :27017     │   │  :3000         │   │  :5173               │ │       │
-│  │  └─────────────┘   └────────────────┘   └──────────────────────┘ │       │
+│  │              PRODUCCIÓN (docker-compose.prod.yml)                │       │
+│  │                                                                  │       │
+│  │  ┌──────────────────────────┐    ┌────────────────────────────┐  │       │
+│  │  │       DOCKER (local)     │    │         RENDER (cloud)     │  │       │
+│  │  │  ┌────────────────────┐  │    │  ┌──────────────────────┐  │  │       │
+│  │  │  │     frontend       │  │    │  │       backend        │  │  │       │
+│  │  │  │  matias0512/15dias- │  │    │  │  one5dias-backend.  │  │  │       │
+│  │  │  │  frontend:latest   │──┼────┼─▶│  onrender.com:443   │  │  │       │
+│  │  │  │  :5173 → :4173     │  │    │  │  :3000               │  │  │       │
+│  │  │  └────────────────────┘  │    │  └────────┬─────────────┘  │  │       │
+│  │  └──────────────────────────┘    │           │                │  │       │
+│  │                                  │    ┌──────▼──────────┐     │  │       │
+│  │                                  │    │  MongoDB Atlas  │     │  │       │
+│  │                                  │    │  cluster0.      │     │  │       │
+│  │                                  │    │  mongodb.net    │     │  │       │
+│  │                                  │    └─────────────────┘     │  │       │
+│  │                                  └────────────────────────────┘  │       │
+│  │  Secretos (GEMINI_API_KEY, JWT_SECRET) → variables de entorno    │       │
+│  │  en Render. NUNCA en código ni en el repositorio.                │       │
 │  └──────────────────────────────────────────────────────────────────┘       │
 │                                                                             │
 │  ┌──────────────────────────────────────────────────────────────────┐       │
-│  │              GITHUB ACTIONS — CI/CD en cada push                  │       │
-│  │    push → lint frontend → lint backend → tests → build Docker →  │       │
-│  │    push imágenes a DockerHub                                      │       │
+│  │             GITHUB ACTIONS — CI/CD en cada push a main           │       │
+│  │    push → lint frontend → lint backend → tests ambos →           │       │
+│  │    build Docker → push imágenes a DockerHub                      │       │
 │  └──────────────────────────────────────────────────────────────────┘       │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
+
 
 ### Stack tecnológico completo
 
@@ -155,8 +179,10 @@ La elección de **Vue.js 3** como framework principal se justifica porque:
 | Testing | Vitest | 48 pruebas unitarias (19 frontend + 29 backend) |
 | Linter | oxlint | Análisis estático (frontend y backend) |
 | CI/CD | GitHub Actions | Lint → Test → Build y Push a DockerHub |
-| Containerización | Docker + Docker Compose | 3 servicios: frontend, backend, mongodb |
-| Registro | DockerHub | Imágenes pre-built para producción |
+| Containerización | Docker + Docker Compose | Frontend: Docker, Backend: Docker local o Render cloud |
+| Despliegue cloud | Render | Backend en la nube (free tier, 750h/mes) |
+| Base de datos cloud | MongoDB Atlas | Base de datos en la nube (M0 free tier, 512 MB) |
+| Registro de imágenes | DockerHub | Imágenes públicas `diegoalvarez1/15dias-frontend` y `diegoalvarez1/15dias-backend` |
 
 ---
 
@@ -167,7 +193,8 @@ La elección de **Vue.js 3** como framework principal se justifica porque:
 - **Autenticación de usuarios**: Registro y login con JWT (cookies httpOnly) para identificar jugadores.
 - **Diálogos dinámicos con IA**: Eventos narrativos generados por Google Gemini que complementan los eventos fijos, enriqueciendo la experiencia sin repetir contenido.
 - **Caché de IA**: Las respuestas generadas por Gemini se almacenan en MongoDB indexadas por SHA256 del contexto, evitando llamadas repetidas a la API externa.
-- **Docker Compose**: Orquestación de 3 servicios (MongoDB, backend, frontend) con un solo comando.
+- **Docker Compose-modo desarrollo**: Orquestación de 3 servicios MongoDB, backend y frontend corren localmente vía Docker Compose.
+- **Docker Compose-Produccion**: Solo el frontend corre en Docker local (puerto 5173),el backend está desplegado en **Render**.
 - **CI/CD real**: GitHub Actions construye y pushea imágenes a DockerHub automáticamente en cada push.
 - **Valores iniciales balanceados**: Ajustados a 6/4/80/70 para mayor dificultad (antes 10/8/100/100).
 
@@ -189,6 +216,15 @@ Google Gemini API (modelo `gemini-2.5-flash`) fue elegido porque:
 |----------|--------|----------------|
 | `generateContent` | POST | Generar eventos narrativos dinámicos con decisiones y efectos |
 
+### Integración en la arquitectura
+
+El backend actúa como intermediario entre el frontend y Gemini:
+
+1. El juego necesita un evento adicional para un día → frontend llama a `POST /api/dialogue/generate`
+2. El backend calcula un hash del contexto actual (día, recursos, flags)
+3. Busca en la colección `dialogues` de MongoDB por ese hash
+4. Si existe → devuelve respuesta cacheada (0 tokens)
+5. Si no existe → llama a Gemini, guarda respuesta en MongoDB, devuelve al frontend
 
 ### Sistema de caché
 
@@ -433,7 +469,7 @@ Badge en el header con el nombre de usuario. Botón "SALIR" para cerrar sesión.
 Badge amarillo en el header que aparece cuando la partida está conectada al servidor (`game.serverGameId` no es null).
 
 ### Selector de partidas 
-Lista las partidas guardadas del usuario desde `GET /api/games/user`. Permite continuar una partida existente o empezar una nueva. *(Nota: implementado en el backend, pendiente de UI en frontend.)*
+Lista las partidas guardadas del usuario desde `GET /api/games/user`. Permite continuar una partida existente o empezar una nueva.
 
 ---
 

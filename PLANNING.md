@@ -155,19 +155,19 @@ Se implemento todo lo Planificado de la semana
 - [x] Actualizar `vite-config.js` (Agregar proxy) - `Game/vite.config.js`
 
 **Configuracion de MongosDB Atlas y Render**
-- [ ] Desplegar backend en Render (cloud gratuito)
-- [ ] Migrar base de datos a MongoDB Atlas (cloud gratuito)
-- [ ] Conectar backend (Render) con base de datos (Atlas)
-- [ ] Arreglar CORS cross-origin para Render (sameSite: none)
+- [x] Desplegar backend en Render (cloud gratuito)
+- [x] Migrar base de datos a MongoDB Atlas (cloud gratuito)
+- [x] Conectar backend (Render) con base de datos (Atlas)
+- [x] Arreglar CORS cross-origin para Render (sameSite: none)
 - [ ] Actualizar DESIGN.md con arquitectura de producción
 
 **Docker: configurar Docker Compose y Dockerfiles para produccion**
 
-- [ ] Crear `compose.yml` en la raiz
-- [ ] Crear `docker-compose.prod.yml` (producción)
-- [ ] Crear Dockerfile en el Backend - `backend/Dockerfile`
+- [x] Crear `compose.yml` en la raiz
+- [x] Crear `docker-compose.prod.yml` (producción)
+- [x] Crear Dockerfile en el Backend - `backend/Dockerfile`
 - [x] Crear .dockerignore en el Backend - `backend/.dockerignore`
-- [ ] Actualizar `Game/Dockerfile` para produccion
+- [x] Actualizar `Game/Dockerfile` para produccion
 - [x] Mover imágenes de `src/assets/Imagen/` a `public/Imagen/` - `Game/public/Imagen/`
 - [x] Crear `.env` en la raiz
 
@@ -175,8 +175,8 @@ Se implemento todo lo Planificado de la semana
 
 - [x] Actualizar tests del frontend
 - [x] Verificar que todo los tests pasan
-- [ ] Build de producción del frontend
-- [ ] Correccion de bugs comunes
+- [x] Build de producción del frontend
+- [x] Correccion de bugs comunes
 
 **Finalizar documentacion y preparar entrega final**
 
@@ -184,9 +184,9 @@ Se implemento todo lo Planificado de la semana
 - [ ] Revisar `DESIGN.md`
 - [ ] Actualizar `PLANNING_BACKEND.md`
 - [ ] Push Final a GitHub
-- [ ] Verificar CI/CD en GitHub Actions
-- [ ] Verificar imagenes en DockerHub
-- [ ] Probar `docker-compose.prod.yml`
+- [x] Verificar CI/CD en GitHub Actions
+- [x] Verificar imagenes en DockerHub
+- [x] Probar `docker-compose.prod.yml`
 - [ ] Enviar entrega final
 
 ### Objetivo de la semana:

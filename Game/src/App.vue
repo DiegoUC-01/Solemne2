@@ -1,6 +1,11 @@
 <template>
   <div class="game-container">
-    <PixelBackground :location="currentLocation" />
+    <div v-if="game.restoring" class="restoring-screen">
+      <div class="restoring-spinner"></div>
+      <p class="restoring-text">CARGANDO...</p>
+    </div>
+    <template v-else>
+      <PixelBackground :location="currentLocation" />
 
     <div class="game-ui">
       <header class="game-header">
@@ -144,6 +149,47 @@
                 <button class="link-btn" @click="game.phase = 'login'; authError = ''">INICIA SESION</button>
               </p>
               <button class="menu-btn" @click="goToMenu">VOLVER</button>
+            </div>
+          </div>
+
+          <div v-else-if="game.phase === 'gameselect'" class="gameselect-screen">
+            <div class="gameselect-content">
+              <h2 class="gameselect-title">TUS PARTIDAS</h2>
+              <div v-if="gamesList.length === 0" class="gameselect-empty">
+                <p>No tienes partidas guardadas.</p>
+              </div>
+              <div v-else class="gameselect-list">
+                <div
+                  v-for="g in gamesList"
+                  :key="g._id"
+                  class="gameselect-item"
+                  :class="{ 'game-finished': g.status !== 'active' }"
+                >
+                  <div class="game-info">
+                    <span class="game-day">Día {{ g.day }}/15</span>
+                    <span class="game-status" :class="'status-' + g.status">
+                      {{ g.status === 'active' ? '⏳ En curso' : g.status === 'won' ? '🏆 Ganada' : '💀 Perdida' }}
+                    </span>
+                    <div class="game-resources">
+                      <span>🍖 {{ g.food }}</span>
+                      <span>💧 {{ g.water }}</span>
+                      <span>❤ {{ g.health }}</span>
+                      <span>★ {{ g.morale }}</span>
+                    </div>
+                    <span class="game-date">{{ formatDate(g.updatedAt) }}</span>
+                  </div>
+                  <button v-if="g.status === 'active'" class="gameselect-continue-btn" @click="handleContinueGame(g)">
+                    CONTINUAR
+                  </button>
+                  <button class="gameselect-delete-btn" @click.stop="handleDeleteGame(g)" title="Eliminar partida">✕</button>
+                </div>
+              </div>
+              <div class="gameselect-actions">
+                <button class="menu-btn primary" @click="audio.playClick(); game.startGameServer()">
+                  NUEVA PARTIDA
+                </button>
+                <button class="menu-btn" @click="goToMenu">VOLVER</button>
+              </div>
             </div>
           </div>
 
@@ -382,6 +428,7 @@
       <div class="loading-spinner"></div>
       <p class="loading-text">GENERANDO...</p>
     </div>
+    </template>
   </div>
 </template>
 
@@ -398,19 +445,47 @@ import DecisionButtons from './components/DecisionButtons.vue'
 import CatchRainGame from './components/minigames/CatchRainGame.vue'
 import FindCansGame from './components/minigames/FindcansGame.vue'
 import EscapeGame from './components/minigames/EscapeGame.vue'
+import { api } from './api/index.js'
 
 const game = useGameStore()
 const server = useServerStore()
 const audio = useAudio()
 const showJournal = ref(false)
+const gamesList = ref([])
+
+function formatDate(date) {
+  return new Date(date).toLocaleDateString('es-CL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+}
+
+async function fetchGamesList() {
+  try {
+    gamesList.value = await api.games.list()
+  } catch (err) {
+    gamesList.value = []
+  }
+}
 const textSpeed = ref('normal')
 const showMinigameIntro = ref(true)
 const authUsername = ref('')
 const authPassword = ref('')
 const authError = ref('')
 
-onMounted(() => {
-  server.fetchMe()
+onMounted(async () => {
+  game.restoring = true
+  await server.fetchMe()
+  if (server.isLoggedIn) {
+    try {
+      const games = await api.games.list()
+      const activeGame = games.find(g => g.status === 'active')
+      if (activeGame) {
+        await game.loadGameFromServer(activeGame._id)
+        game.restoring = false
+        return
+      }
+    } catch {}
+  }
+  game.restoreLocalState()
+  game.restoring = false
 })
 
 
@@ -464,9 +539,25 @@ function handleNewGame() {
 
 async function handleNewGameOnline() {
   audio.playClick()
+  game.reset()
+  await fetchGamesList()
+  game.phase = 'gameselect'
+}
+
+async function handleContinueGame(gameData) {
+  audio.playClick()
   audio.startMusic()
   game.reset()
-  await game.startGameServer()
+  await game.loadGameFromServer(gameData._id)
+}
+
+async function handleDeleteGame(gameData) {
+  try {
+    await api.games.deleteGame(gameData._id)
+    gamesList.value = gamesList.value.filter(g => g._id !== gameData._id)
+  } catch (err) {
+    console.error('Error al eliminar partida:', err)
+  }
 }
 
 async function handleLogin() {
@@ -912,6 +1003,34 @@ watch(() => game.phase, (newPhase) => {
   color: #fbbf24;
   text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
   animation: pulse 1.5s ease-in-out infinite;
+}
+
+.restoring-screen {
+  position: fixed;
+  inset: 0;
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.restoring-spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(255, 255, 255, 0.1);
+  border-top: 5px solid #4ade80;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.restoring-text {
+  margin-top: 16px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  color: #4ade80;
+  text-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
 }
 
 @keyframes spin {
@@ -1429,6 +1548,133 @@ watch(() => game.phase, (newPhase) => {
     z-index: 100;
     box-shadow: -4px 0 20px rgba(0, 0, 0, 0.8);
   }
+}
+
+.gameselect-screen {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 5;
+}
+
+.gameselect-content {
+  width: 100%;
+  max-width: 600px;
+}
+
+.gameselect-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 1.2rem;
+  color: #fbbf24;
+  text-align: center;
+  margin-bottom: 24px;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
+}
+
+.gameselect-empty {
+  text-align: center;
+  padding: 40px 20px;
+  font-family: 'VT323', monospace;
+  font-size: 1.2rem;
+  color: #888;
+}
+
+.gameselect-list {
+  max-height: 350px;
+  overflow-y: auto;
+  margin-bottom: 16px;
+  padding: 0 4px;
+}
+
+.gameselect-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid #333;
+  border-radius: 4px;
+  gap: 12px;
+}
+
+.gameselect-item.game-finished {
+  opacity: 0.5;
+}
+
+.game-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.game-day {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.7rem;
+  color: #fbbf24;
+}
+
+.game-status {
+  font-family: 'VT323', monospace;
+  font-size: 0.9rem;
+}
+
+.status-active { color: #4ade80; }
+.status-won { color: #fbbf24; }
+.status-lost { color: #ef4444; }
+
+.game-resources {
+  display: flex;
+  gap: 12px;
+  font-family: 'VT323', monospace;
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.game-date {
+  font-family: 'VT323', monospace;
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.gameselect-continue-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  padding: 8px 12px;
+  background: #22c55e;
+  color: #000;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.gameselect-continue-btn:hover {
+  background: #16a34a;
+}
+
+.gameselect-delete-btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 0.55rem;
+  padding: 6px 10px;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  margin-left: 6px;
+}
+
+.gameselect-delete-btn:hover {
+  background: #b91c1c;
+}
+
+.gameselect-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
 }
 
 @media (max-width: 600px) {

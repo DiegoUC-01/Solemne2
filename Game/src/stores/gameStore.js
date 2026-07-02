@@ -25,6 +25,7 @@ export const useGameStore = defineStore('game', {
     journal: [],
     serverGameId: null,
     aiLoading: false,
+    restoring: false,
   }),
 
   getters: {
@@ -58,6 +59,7 @@ export const useGameStore = defineStore('game', {
       this.usedRandomEvents = []
       this.gameOverReason = null
       this.journal = []
+      this.saveLocalState()
     },
 
     addToJournal(entry) {
@@ -101,6 +103,7 @@ export const useGameStore = defineStore('game', {
       } else {
         this.currentSegment++
       }
+      this.saveLocalState()
     },
 
     makeDecision(decisionIndex) {
@@ -148,6 +151,7 @@ export const useGameStore = defineStore('game', {
       }
 
       this.phase = 'result'
+      this.saveLocalState()
     },
 
     applyEffects(effects) {
@@ -217,6 +221,7 @@ export const useGameStore = defineStore('game', {
       } else {
         this.loadRandomEvent()
       }
+      this.saveLocalState()
     },
 
     applyDailyConsumption() {
@@ -286,6 +291,7 @@ export const useGameStore = defineStore('game', {
       }
 
       this.advanceDay()
+      this.saveLocalState()
     },
 
     completeMinigame(result) {
@@ -321,6 +327,7 @@ export const useGameStore = defineStore('game', {
       }
 
       this.advanceDay()
+      this.saveLocalState()
     },
 
     applyServerState(serverState) {
@@ -357,6 +364,16 @@ export const useGameStore = defineStore('game', {
         this.applyServerState(data)
       } catch (err) {
         console.error('Error al iniciar partida en servidor:', err)
+      }
+    },
+
+    async loadGameFromServer(gameId) {
+      try {
+        const data = await api.games.get(gameId)
+        this.serverGameId = data._id
+        this.applyServerState(data)
+      } catch (err) {
+        console.error('Error al cargar partida:', err)
       }
     },
 
@@ -404,8 +421,40 @@ export const useGameStore = defineStore('game', {
     },
 
     reset() {
+      this.clearLocalState()
       this.serverGameId = null
       this.$reset()
+    },
+
+    saveLocalState() {
+      if (this.serverGameId || this.phase === 'menu') return
+      const state = {
+        day: this.day, phase: this.phase, food: this.food, water: this.water,
+        health: this.health, morale: this.morale, currentEvent: this.currentEvent,
+        currentSegment: this.currentSegment, decisionResult: this.decisionResult,
+        flags: this.flags, journal: this.journal, usedRandomEvents: this.usedRandomEvents,
+        gameOverReason: this.gameOverReason,
+      }
+      try { localStorage.setItem('15dias-local-save', JSON.stringify(state)) } catch {}
+    },
+
+    restoreLocalState() {
+      try {
+        const saved = localStorage.getItem('15dias-local-save')
+        if (!saved) return false
+        const s = JSON.parse(saved)
+        this.day = s.day; this.phase = s.phase; this.food = s.food
+        this.water = s.water; this.health = s.health; this.morale = s.morale
+        this.currentEvent = s.currentEvent; this.currentSegment = s.currentSegment
+        this.decisionResult = s.decisionResult; this.flags = s.flags
+        this.journal = s.journal || []; this.usedRandomEvents = s.usedRandomEvents || []
+        this.gameOverReason = s.gameOverReason
+        return true
+      } catch { return false }
+    },
+
+    clearLocalState() {
+      try { localStorage.removeItem('15dias-local-save') } catch {}
     },
   },
 })

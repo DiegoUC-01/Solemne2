@@ -56,6 +56,9 @@ export const api = {
     async get(id) {
       return request(`/games/${id}`)
     },
+    async deleteGame(id) {
+      return request(`/games/${id}`, { method: 'DELETE' })
+    },
     async start(id) {
       return request(`/games/${id}/start`, { method: 'PUT' })
     },

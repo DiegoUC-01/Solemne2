@@ -235,6 +235,16 @@ router.get('/:id', async (req, res) => {
   }
 })
 
+router.delete('/:id', async (req, res) => {
+  try {
+    const game = await Game.findOneAndDelete({ _id: req.params.id, userId: req.userId })
+    if (!game) return res.status(404).json({ error: 'Partida no encontrada' })
+    res.json({ message: 'Partida eliminada' })
+  } catch (err) {
+    res.status(500).json({ error: 'Error al eliminar partida' })
+  }
+})
+
 router.put('/:id/start', async (req, res) => {
   try {
     const game = await Game.findOne({ _id: req.params.id, userId: req.userId })

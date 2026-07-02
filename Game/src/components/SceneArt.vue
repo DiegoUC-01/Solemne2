@@ -32,7 +32,7 @@ const locationClass = computed(() => `scene-${props.location}`)
 
 const imageUrl = computed(() => {
   if (!props.image) return null
-  return `/imagen/${props.image}.png`
+  return `/Imagen/${props.image}.png`
 })
 </script>
 

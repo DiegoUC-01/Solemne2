@@ -159,7 +159,7 @@ Se implemento todo lo Planificado de la semana
 - [x] Migrar base de datos a MongoDB Atlas (cloud gratuito)
 - [x] Conectar backend (Render) con base de datos (Atlas)
 - [x] Arreglar CORS cross-origin para Render (sameSite: none)
-- [ ] Actualizar DESIGN.md con arquitectura de producción
+- [x] Actualizar DESIGN.md con arquitectura de producción
 
 **Docker: configurar Docker Compose y Dockerfiles para produccion**
 
@@ -180,14 +180,14 @@ Se implemento todo lo Planificado de la semana
 
 **Finalizar documentacion y preparar entrega final**
 
-- [ ] Actualizar `README.md`
-- [ ] Revisar `DESIGN.md`
-- [ ] Actualizar `PLANNING_BACKEND.md`
-- [ ] Push Final a GitHub
+- [x] Actualizar `README.md`
+- [x] Revisar `DESIGN.md`
+- [x] Actualizar `PLANNING_BACKEND.md`
+- [x] Push Final a GitHub
 - [x] Verificar CI/CD en GitHub Actions
 - [x] Verificar imagenes en DockerHub
 - [x] Probar `docker-compose.prod.yml`
-- [ ] Enviar entrega final
+- [x] Enviar entrega final
 
 ### Objetivo de la semana:
 > Conectar el gameStore al backend para modo online, dockerizar todo, verificar tests, documentar y entregar.
